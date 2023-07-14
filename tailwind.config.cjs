@@ -21,11 +21,20 @@ module.exports = {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    styled: true,
-    themes: ["light", "dark"],
-    base: true,
-    utils: true,
-    logs: true,
-    rtl: false,
+    themes: [
+      {
+        mytheme: {
+          primary: "#8FD7D9",
+          secondary: "#cffafe",
+          accent: "#d1d5db",
+          neutral: "#2b3440",
+          "base-100": "#ffffff",
+          info: "#6b7280",
+          success: "#36d399",
+          warning: "#fbbd23",
+          error: "#f87272",
+        },
+      },
+    ],
   },
 };

@@ -12,23 +12,30 @@
   font-style: normal;
 }
 
-body {
+#root {
   font-family: "GmarketSansMedium";
+  color: #374151;
+  /* background-color: #d1d5db; */
 }
 
-.menu {
-  top: 112px;
+.container {
+  margin: 0 auto;
+  margin-top: 50px;
+  width: 1080px;
 }
 
-.drawer-content {
+.placeholder {
+  font-size: 16px;
+  font-weight: 400;
+  color: #98999b;
+}
+
+input[type="text"]::placeholder {
+  font-size: 16px; /* 원하는 폰트 크기로 설정 */
+  font-weight: 400;
+  color: #98999b;
+}
+/* .drawer-content {
   max-height: initial !important;
   min-height: -webkit-fill-available;
-}
-
-.drawer-toggle:checked + .drawer-content {
-  max-height: 100vh !important;
-}
-
-.js-searchedItem:active span {
-  color: white !important;
-}
+} */
