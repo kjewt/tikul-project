@@ -1,7 +1,63 @@
 import { Link } from 'react-router-dom';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 import DropDown from '../components/common/Dropdown';
+import EmailCheck from '../components/check/EmailCheck';
 
 const Join = (): JSX.Element => {
+
+
+
+    const handleRegister = async () => {
+        try {
+            // Get the input values for email and password
+            const emailInput = document.getElementById('email') as HTMLInputElement;
+            const passwordInput = document.getElementById('password') as HTMLInputElement;
+            const confirmPasswordInput = document.getElementById('confirmPassword') as HTMLInputElement;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailError = document.getElementById('emailError') as HTMLSpanElement;
+            if (!emailRegex.test(emailInput.value)) {
+                emailError.classList.remove("hidden");
+                return;
+            } else {
+                emailError.classList.add("hidden");
+            }
+
+
+            // Check if email already exists in the database
+            // You can add your own logic here to check against existing user data
+
+            // Validate the password
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,16}$/;
+            if (!passwordRegex.test(passwordInput.value)) {
+                console.log('Invalid password format');
+                return;
+            }
+
+            // Check if the password and confirm password match
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                console.log('Passwords do not match');
+                return;
+            }
+
+            // Proceed with user registration
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            // Your code to register the user with Firebase using `createUserWithEmailAndPassword`
+
+            // Handle successful registration
+
+        } catch (error) {
+            // Handle registration errors
+            console.log(error);
+        }
+    };
+
+    const db = firebase.firestore();
+    console.log(db)
+
     return (
         <>
             <div className="container min-h-screen">
@@ -14,21 +70,18 @@ const Join = (): JSX.Element => {
                     </div>
                     <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                         <div className="card-body">
-                            <div className="form-control">
-                                <label className="label">
-                                    <span className="label-text">이메일</span>
-                                </label>
-                                <input type="text" placeholder="이메일" className="input input-bordered" />
-                            </div>
+                            <EmailCheck />
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">비밀번호</span>
+                                    <span className="password-error text-sm text-primary hidden">대문자, 소문자, 숫자 포함 8~16자 이내</span>
                                 </label>
                                 <input type="text" placeholder="비밀번호 입력" className="input input-bordered" />
                             </div>
                             <div className="form-control">
                                 <label className="label">
                                     <span className="label-text">비밀번호 확인</span>
+                                    <span className="password-confirm-error text-sm text-primary hidden">비밀번호가 일치하지 않습니다.</span>
                                 </label>
                                 <input type="text" placeholder="비밀번호 재입력" className="input input-bordered" />
                             </div>
@@ -76,7 +129,9 @@ const Join = (): JSX.Element => {
                             </div>
                             {/* 회원가입하기 버튼*/}
                             <div className="form-control my-6">
-                                <button className="btn btn-primary">회원가입하기</button>
+                                <button className="btn btn-primary" onClick={handleRegister}>
+                                    회원가입하기
+                                </button>
                             </div>
 
                         </div>

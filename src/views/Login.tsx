@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import EmailCheck from '../components/check/EmailCheck';
 const Login = (): JSX.Element => {
   return (
     <>
@@ -12,12 +13,7 @@ const Login = (): JSX.Element => {
           </div>
           <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <div className="card-body">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">이메일</span>
-                </label>
-                <input type="text" placeholder="이메일을 입력하세요" className="input input-bordered" />
-              </div>
+              <EmailCheck />
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">비밀번호</span>
