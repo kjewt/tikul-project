@@ -1,11 +1,16 @@
 import {atom} from "recoil";
 
-// export const counterState = atom<number>({
-//   key: "counterState",
-//   default: 0,
-// });
+export const emailState = atom({
+  key: "emailState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});
 
-// export const isLoggedInState = atom<boolean>({
-//   key: "isLoggedInState",
-//   default: false,
-// });
+export const passwordState = atom({
+  key: "passwordState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});
+
+export const isSignupState = atom({
+  key: "isSignupState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});

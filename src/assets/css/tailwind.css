@@ -30,7 +30,9 @@
   color: #98999b;
 }
 
-input[type="text"]::placeholder {
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
   font-size: 16px; /* 원하는 폰트 크기로 설정 */
   font-weight: 400;
   color: #98999b;

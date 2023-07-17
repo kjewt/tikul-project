@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import EmailCheck from '../components/check/EmailCheck';
+import EmailCheck from '../components/auth/EmailCheck';
+import Password from '../components/auth/Password';
 const Login = (): JSX.Element => {
   return (
     <>
@@ -14,12 +15,7 @@ const Login = (): JSX.Element => {
           <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <div className="card-body">
               <EmailCheck />
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">비밀번호</span>
-                </label>
-                <input type="text" placeholder="비밀번호를 입력" className="input input-bordered" />
-              </div>
+              <Password label="비밀번호 입력" error="대문자, 소문자, 숫자 포함 8~16자 이내" placeholder="비밀번호 입력" />
               <div className="form-control my-6">
                 <button className="btn btn-primary">Login</button>
                 <label className="label justify-center mt-2">

@@ -1,23 +1,39 @@
 import { initializeApp } from "firebase/app";
+
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore/lite";
+import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_APP_ID,
-  measurementId: import.meta.env.VITE_MEASUREMENT_ID,
+  apiKey: "AIzaSyBp1GBpOjLTUVZNA12bc8HeJzaVREdYuD0",
+  authDomain: "project-fintech-c29d3.firebaseapp.com",
+  projectId: "project-fintech-c29d3",
+  storageBucket: "project-fintech-c29d3.appspot.com",
+  messagingSenderId: "717110448677",
+  appId: "1:717110448677:web:e4f0fffc2b04806bd665cc",
+  measurementId: "G-6E60VPTB2F",
+  // apiKey: import.meta.env.VITE_API_KEY,
+  // authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  // projectId: import.meta.env.VITE_PROJECT_ID,
+  // storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  // messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  // appId: import.meta.env.VITE_APP_ID,
+  // measurementId: import.meta.env.VITE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
+const firebaseFirestore = getFirestore(firebaseApp);
 const firebaseAuth = getAuth(firebaseApp);
+// const firebase = require('firebase');
+// const firebaseui = require('firebaseui');
 
-export {
+// const initializeFirebaseApp = () => {
+//   const ui = new firebaseui.auth.AuthUI(firebase.auth());
+// }
+
+export default {
   firebaseAuth,
+  firebaseFirestore,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 };
