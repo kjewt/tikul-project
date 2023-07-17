@@ -11,7 +11,6 @@ interface PasswordCheckProps {
     label: string;
     error?: string;
     placeholder: string;
-    double?: boolean;
 }
 
 const PasswordCheck = (props: PasswordCheckProps): JSX.Element => {
@@ -19,6 +18,7 @@ const PasswordCheck = (props: PasswordCheckProps): JSX.Element => {
     const [prePassword, setPrePassword] = useState('');
     const [isValidPassword, setIsValidPassword] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
+    const [isTyping2, setIsTyping2] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -37,55 +37,54 @@ const PasswordCheck = (props: PasswordCheckProps): JSX.Element => {
 
     const handlePrePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPrePassword(event.target.value);
-        setIsValidPassword(isPasswordValid(password) && password === event.target.value);
+        setIsTyping(true);
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = event.target.value;
         setPassword(newPassword);
-        setIsValidPassword(isPasswordValid(newPassword) && newPassword === prePassword);
-        setIsTyping(true);
+        setIsTyping2(true);
     };
+
+    useEffect(() => {
+        setIsValidPassword(isPasswordValid(password) && password === prePassword);
+    }, [password, prePassword]);
 
     return (
         <>
-            {props.double && (
-                <div className="form-control">
-                    <label className="label">
-                        <span className="label-text">비밀번호</span>
-                        {!isPasswordValid(prePassword) && isTyping && (
-                            <span className="password-error text-sm text-primary">
-                                대문자, 소문자, 숫자 포함 8~16자 이내
-                            </span>
-                        )}
-                    </label>
-                    <input
-                        type="password"
-                        placeholder="비밀번호 입력"
-                        className={`input input-bordered ${(!isPasswordValid(prePassword) && isTyping) && 'input-error'
-                            }`}
-                        value={prePassword}
-                        onChange={handlePrePasswordChange}
-                    />
-                </div>
-            )}
-
-            <div className="form-control" ref={inputRef}>
+            <div className="form-control">
                 <label className="label">
-                    <span className="label-text">{props.label}</span>
-                    {!isValidPassword && isTyping && (
-                        <span className="text-sm text-error">{props.error}</span>
+                    <span className="label-text">비밀번호</span>
+                    {!isPasswordValid(prePassword) && isTyping && (
+                        <span className="password-error text-sm text-primary">
+                            대문자, 소문자, 숫자 포함 8~16자 이내
+                        </span>
                     )}
                 </label>
                 <input
                     type="password"
-                    placeholder={props.placeholder}
-                    className={`password input input-bordered ${!isValidPassword && isTyping && 'input-error'}`}
+                    placeholder="비밀번호 입력"
+                    className="input input-bordered"
+                    value={prePassword}
+                    onChange={handlePrePasswordChange}
+                />
+            </div>
+
+            <div className="form-control" ref={inputRef}>
+                <label className="label">
+                    <span className="label-text">비밀번호 재확인</span>
+                    {!isValidPassword && isTyping && isTyping2 && (
+                        <span className="text-sm text-error">입력된 비밀번호와 일치하지 않습니다.</span>
+                    )}
+                </label>
+                <input
+                    type="password"
+                    placeholder="비밀번호 재확인"
+                    className={`password input input-bordered ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
                     value={password}
                     onChange={handlePasswordChange}
-                    disabled={props.double && !isPasswordValid(prePassword)}
+                    disabled={!isPasswordValid(prePassword)}
                 />
-
             </div>
         </>
     );

@@ -33,7 +33,7 @@ const Join = (): JSX.Element => {
                         <div className="card-body">
                             <EmailCheck />
 
-                            <PasswordCheck double={true} label="비밀번호 재확인" error="입력된 비밀번호와 일치하지 않습니다." placeholder="비밀번호 재입력" />
+                            <PasswordCheck />
 
                             {/* 나누기 */}
                             <div className="flex items-center justify-around">
