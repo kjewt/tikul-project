@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
-import { emailState } from '../../state/atoms';
+import { emailState, isEmailState } from '../../state/atoms';
 
 const isEmailValid = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -8,32 +8,19 @@ const isEmailValid = (email: string): boolean => {
 };
 
 const EmailCheck = (): JSX.Element => {
-    const [email, setEmail] = useRecoilState(emailState)
+    const [email, setEmail] = useRecoilState(emailState);
+    const [isEmail, setIsEmail] = useRecoilState(isEmailState);
     const [isValidEmail, setIsValidEmail] = useState(true);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-                if (!isValidEmail) {
-                    setEmail('');
-                    setIsValidEmail(true);
-                }
-            }
-        };
-
-        document.addEventListener('mousedown', handleOutsideClick);
-
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        };
-    }, [isValidEmail]);
+        setIsEmail(isEmailValid(email));
+    }, [email, setIsEmail]);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newEmail = event.target.value;
-        const isValid = isEmailValid(newEmail);
         setEmail(newEmail);
-        setIsValidEmail(isValid);
+        setIsValidEmail(true);
     };
 
     return (
@@ -50,7 +37,6 @@ const EmailCheck = (): JSX.Element => {
                     value={email}
                     onChange={handleEmailChange}
                 />
-
             </div>
         </>
     );

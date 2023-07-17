@@ -1,54 +1,52 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
-import { passwordState } from '../../state/atoms';
+import { passwordState, isSamePassportState } from '../../state/atoms';
 
 const isPasswordValid = (password: string): boolean => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,16}$/;
     return passwordRegex.test(password);
 };
 
-interface PasswordCheckProps {
-    label: string;
-    error?: string;
-    placeholder: string;
-}
-
-const PasswordCheck = (props: PasswordCheckProps): JSX.Element => {
+const PasswordCheck = (): JSX.Element => {
     const [password, setPassword] = useRecoilState(passwordState);
+    const [isSame, setIsSame] = useRecoilState(isSamePassportState);
     const [prePassword, setPrePassword] = useState('');
+    const [comparingPassword, setComparingPassword] = useState('');
     const [isValidPassword, setIsValidPassword] = useState(true);
     const [isTyping, setIsTyping] = useState(false);
     const [isTyping2, setIsTyping2] = useState(false);
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    useEffect(() => {
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-                setIsTyping(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleOutsideClick);
-
-        return () => {
-            document.removeEventListener('mousedown', handleOutsideClick);
-        };
-    }, []);
 
     const handlePrePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPrePassword(event.target.value);
+        setIsValidPassword(isPasswordValid(event.target.value) && comparingPassword === event.target.value);
         setIsTyping(true);
+        setIsSame(false); // Reset setIsSame to false when prePassword is changed
     };
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = event.target.value;
-        setPassword(newPassword);
+        setComparingPassword(newPassword);
+        setIsValidPassword(isPasswordValid(newPassword) && newPassword === prePassword);
         setIsTyping2(true);
+        setIsTyping(true);
+        setIsSame(false); // Reset setIsSame to false when comparingPassword is changed
     };
 
     useEffect(() => {
         setIsValidPassword(isPasswordValid(password) && password === prePassword);
-    }, [password, prePassword]);
+        setIsSame((comparingPassword === prePassword) && comparingPassword.length > 1);
+        if (isSame) {
+            setPassword(comparingPassword);
+        } else {
+            setPassword(null);
+        }
+    }, [comparingPassword, isSame, password, prePassword, setPassword]);
+
+    useEffect(() => {
+        if (!isPasswordValid(prePassword)) {
+            setPassword('');
+        }
+    }, [prePassword, setPassword]);
 
     return (
         <>
@@ -70,20 +68,21 @@ const PasswordCheck = (props: PasswordCheckProps): JSX.Element => {
                 />
             </div>
 
-            <div className="form-control" ref={inputRef}>
+            <div className="form-control">
                 <label className="label">
                     <span className="label-text">비밀번호 재확인</span>
                     {!isValidPassword && isTyping && isTyping2 && (
-                        <span className="text-sm text-error">입력된 비밀번호와 일치하지 않습니다.</span>
+                        <span className="text-sm text-error">비밀번호가 일치하지 않습니다.</span>
                     )}
                 </label>
                 <input
                     type="password"
                     placeholder="비밀번호 재확인"
                     className={`password input input-bordered ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
-                    value={password}
+                    value={comparingPassword}
                     onChange={handlePasswordChange}
                     disabled={!isPasswordValid(prePassword)}
+                    {...(!isPasswordValid(prePassword) && { value: '' })}
                 />
             </div>
         </>

@@ -1,13 +1,18 @@
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { bankNameState } from '../../state/atoms';
 
 const DropDown = (): JSX.Element => {
     const [selectedItem, setSelectedItem] = useState('');
     const [isOpen, setIsOpen] = useState(false);
+    const [bankName, setBankName] = useRecoilState(bankNameState);
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
+        setBankName(item)
         setIsOpen(false);
     };
+
 
     const toggleDropDown = () => {
         setIsOpen(!isOpen);
@@ -20,9 +25,9 @@ const DropDown = (): JSX.Element => {
                 <label className="label">
                     <span className="label-text">은행 선택</span>
                 </label>
-                <div className="dropdown">
+                <div className="dropdown" >
                     <label tabIndex={0} className="btn btn-outline justify-between text-accent w-full" onClick={toggleDropDown}>
-                        <span className="placeholder">{selectedItem || '은행선택'}</span>
+                        <span className="label-text">{selectedItem}</span>
                         <i className='bx bx-chevron-down text-xl'></i>
                     </label>
                     <ul tabIndex={0} className={`dropdown-content overflow-y-auto h-52 w-full z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ${isOpen ? '' : 'hidden'}`}>
