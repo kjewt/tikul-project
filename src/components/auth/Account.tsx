@@ -3,7 +3,7 @@ import { useRecoilState } from 'recoil';
 import { accountState, isAccountState } from '../../state/atoms';
 
 const isAccountValid = (account: string): boolean => {
-    const accountRegex = /^[1-9][0-9]{9,13}$/;
+    const accountRegex = /^[1-9][0-9]{8,13}$/;
     return accountRegex.test(account);
 };
 
@@ -43,7 +43,7 @@ const Account = (): JSX.Element => {
                 <input
                     type="text"
                     placeholder="숫자로 작성해주세요."
-                    className="input input-bordered"
+                    className={`input input-bordered ${!isValidAccount ? 'input-error' : ''}`}
                     value={account}
                     onChange={handleAccountChange}
                 />

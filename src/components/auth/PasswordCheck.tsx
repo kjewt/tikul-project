@@ -47,7 +47,7 @@ const PasswordCheck = (): JSX.Element => {
             setPassword('');
         }
     }, [prePassword, setPassword]);
-
+    // console.log(password)
     return (
         <>
             <div className="form-control">

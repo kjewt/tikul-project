@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
@@ -21,9 +21,10 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseFirestore = getFirestore(firebaseApp);
-const firebaseAuth = getAuth(firebaseApp);
+export const firebaseApp = initializeApp(firebaseConfig);
+export const firebaseFirestore = getFirestore(firebaseApp);
+export const firebaseAuth = getAuth(firebaseApp);
+
 // const firebase = require('firebase');
 // const firebaseui = require('firebaseui');
 
@@ -31,9 +32,8 @@ const firebaseAuth = getAuth(firebaseApp);
 //   const ui = new firebaseui.auth.AuthUI(firebase.auth());
 // }
 
-export default {
-  firebaseAuth,
-  firebaseFirestore,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-};
+// export default {
+//   firebaseApp,
+//   firebaseAuth,
+//   firebaseFirestore,
+// };

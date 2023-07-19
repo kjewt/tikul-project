@@ -14,13 +14,29 @@ const EmailCheck = (): JSX.Element => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        setIsEmail(isEmailValid(email));
-    }, [email, setIsEmail]);
+        const handleOutsideClick = (event: MouseEvent) => {
+            if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+                if (!isValidEmail) {
+                    setEmail('');
+                    setIsValidEmail(true);
+                }
+            }
+        };
+
+        document.addEventListener('mousedown', handleOutsideClick);
+
+        return () => {
+            document.removeEventListener('mousedown', handleOutsideClick);
+        };
+    }, [isValidEmail, setEmail]);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newEmail = event.target.value;
         setEmail(newEmail);
         setIsValidEmail(true);
+        if (!isEmailValid(newEmail)) {
+            setIsValidEmail(false);
+        }
     };
 
     return (
@@ -28,7 +44,7 @@ const EmailCheck = (): JSX.Element => {
             <div className="form-control" ref={inputRef}>
                 <label className="label">
                     <span className="label-text">이메일</span>
-                    {!isValidEmail && <span className="text-sm text-error">유효한 이메일 형식이 아닙니다.</span>}
+                    {!isValidEmail && <span className="text-sm text-primary">이메일 형식으로 작성해주세요.</span>}
                 </label>
                 <input
                     type="text"
@@ -36,6 +52,7 @@ const EmailCheck = (): JSX.Element => {
                     className={`input input-bordered ${!isValidEmail ? 'input-error' : ''}`}
                     value={email}
                     onChange={handleEmailChange}
+                    autoComplete="email"
                 />
             </div>
         </>
