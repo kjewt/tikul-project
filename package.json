@@ -29,8 +29,14 @@
   },
   "dependencies": {
     "@firebase/firestore": "^4.0.0",
+    "@popperjs/core": "^2.11.8",
     "@vercel/node": "^2.14.3",
+    "date-fns": "^2.30.0",
     "firebase": "^10.0.0",
-    "firebaseui": "^6.0.2"
+    "firebaseui": "^6.0.2",
+    "focus-trap-react": "^10.2.1",
+    "js-cookie": "^3.0.5",
+    "react-day-picker": "^8.8.0",
+    "react-popper": "^2.3.0"
   }
 }

@@ -56,3 +56,9 @@ export const isCheckedState = atom({
   key: "isCheckedState",
   default: "false",
 });
+// for adding
+
+export const selectedDateState = atom({
+  key: "selectedDateState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});

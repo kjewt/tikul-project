@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -14,7 +14,8 @@ import {
     isCheckedState,
 } from '../../state/atoms';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth } from '../../../firebase';
+import { firebaseAuth, firebaseApp } from '../../../firebase';
+import { doc, setDoc, getFirestore } from 'firebase/firestore'
 
 const BtnJoin = (): JSX.Element => {
     const navigate = useNavigate();
@@ -34,20 +35,36 @@ const BtnJoin = (): JSX.Element => {
     const isAllTrue = checkList.every((value) => value);
 
     // 지울 영역
-    useEffect(() => {
-        console.log(email, password, account, bankName, accountPassword);
-    }, [email, password, account, bankName, accountPassword]);
+
+    const db = getFirestore(firebaseApp)
 
     const Signup = async () => {
         try {
+            // Firebase 인증
             await createUserWithEmailAndPassword(firebaseAuth, email, password);
             console.log('회원가입 성공');
-            navigate('/login'); // 회원가입 성공 후 로그인 페이지로 이동
+
+            // 사용자 정보 Firestore에 저장
+            const user = firebaseAuth.currentUser;
+            console.log(user.uid)
+
+            if (user) {
+                const userData = {
+                    email: email,
+                    account: account,
+                    bankName: bankName,
+                    accountPassword: accountPassword,
+                    balance: 0,
+                    details: {},
+                };
+                await setDoc(doc(db, "users", user.uid), userData);
+
+                navigate('/login'); // 회원가입 성공 후 로그인 페이지로 이동
+            }
         } catch (error) {
             console.log('회원가입 실패', error);
         }
     };
-
 
     return (
         <>

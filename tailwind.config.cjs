@@ -12,6 +12,7 @@ module.exports = {
     },
     fontSize: {
       xs: "0.5rem",
+      s: "9px",
       sm: "0.8rem",
       base: "1rem",
       xl: "1.25rem",
@@ -37,7 +38,7 @@ module.exports = {
           primary: "#8FD7D9",
           secondary: "#cffafe",
           accent: "#d1d5db",
-          neutral: "#2b3440",
+          neutral: "#98999B",
           "base-100": "#ffffff",
           info: "#6b7280",
           success: "#36d399",

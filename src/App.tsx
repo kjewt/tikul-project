@@ -5,15 +5,19 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './views/Login';
 import Join from './views/Join';
 import Home from './views/Home'
+import AddAcount from './views/AddAcount'
+import ScrollToTop from './components/common/ScrollToTop';
 
 const App = (): JSX.Element => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <section>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/join" element={<Join />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/add" element={<AddAcount />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </section>

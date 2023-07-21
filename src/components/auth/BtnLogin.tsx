@@ -3,36 +3,44 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
     emailState,
-    isSignupState,
     passwordState,
 } from '../../state/atoms';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { firebaseAuth } from '../../../firebase';
-import Modal from '../common/modal';
+import Modal from '../common/Modal';
+import Cookies from 'js-cookie';
 
 const BtnLogin = (): JSX.Element => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
-    const [isLogin, setIsLogin] = useState(true)
+    const [isLogin, setIsLogin] = useState(true);
 
-    // 지울 영역
-    useEffect(() => {
-        console.log(email, password);
-    }, [email, password]);
 
     const Login = async () => {
         try {
             await signInWithEmailAndPassword(firebaseAuth, email, password);
             console.log('로그인 성공!');
+            console.log(firebaseAuth);
+            setIsLogin(true);
+
+            // 쿠키에 사용자 정보 저장
+            Cookies.set('user', { email });
+
             navigate('/Home'); // 회원가입 성공 후 로그인 페이지로 이동
         } catch (error) {
-            console.log('로그인 실패', error)
-            setIsLogin(false)
+            console.log('로그인 실패', error);
+            setIsLogin(false);
         }
     };
-    console.log(isLogin)
+    console.log(isLogin);
+    useEffect(() => {
+        if (email) {
+            sessionStorage.setItem('user', JSON.stringify({ email }));
+        }
+    }, []);
+
 
     return (
         <>
@@ -40,7 +48,6 @@ const BtnLogin = (): JSX.Element => {
                 <Modal
                     title="로그인 실패"
                     content="이메일이나 비밀번호가 틀렸습니다."
-
                 />
             )}
 

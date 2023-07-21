@@ -3,17 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { emailState, passwordState } from '../../state/atoms';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { firebaseAuth, firebaseFirestore } from '../../../firebase';
+import { firebaseAuth } from '../../../firebase';
 
 const BtnGoogleLogin = (): JSX.Element => {
     const navigate = useNavigate();
 
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
-
-    useEffect(() => {
-        console.log(email, password);
-    }, [email, password]);
 
     const provider = new GoogleAuthProvider();
 
@@ -27,12 +23,17 @@ const BtnGoogleLogin = (): JSX.Element => {
             console.log('사용자 이메일:', user.email);
             console.log('사용자 이름:', user.displayName);
 
+            // 구글 로그인의 결과로 받아온 사용자 정보를 세션 스토리지에 저장
+            sessionStorage.setItem('user', JSON.stringify({
+                email: user.email,
+                displayName: user.displayName,
+            }));
+
             navigate('/Home');
         } catch (error) {
             alert('로그인에 실패했습니다.');
         }
     };
-
 
     return (
         <>
