@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { emailState } from '../state/atoms';
+import { emailState, isTransferState } from '../state/atoms';
 import NavBar from '../components/common/NavBar'
 import Banking from '../components/main/Banking';
+import Transfer from '../components/main/Transfer';
 import Summary from '../components/main/Summary';
 
-const Login = (): JSX.Element => {
+const Home = (): JSX.Element => {
 
     const [email, setEmail] = useRecoilState(emailState);
+    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState);
 
 
     console.log(email)
@@ -18,11 +20,12 @@ const Login = (): JSX.Element => {
                 <NavBar />
                 <div className="flex">
                     <Summary />
-                    <Banking />
+
+                    {isTransfer ? <Banking /> : <Transfer />}
                 </div>
             </div>
         </>
     );
 };
 
-export default Login;
+export default Home;

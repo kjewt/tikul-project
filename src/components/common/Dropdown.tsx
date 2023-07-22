@@ -1,18 +1,22 @@
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { bankNameState } from '../../state/atoms';
+import { bankNameState, transferBankNameState } from '../../state/atoms';
 
-const DropDown = (): JSX.Element => {
+const DropDown = (props): JSX.Element => {
     const [selectedItem, setSelectedItem] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const [bankName, setBankName] = useRecoilState(bankNameState);
+    const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
 
     const handleItemClick = (item: string) => {
         setSelectedItem(item);
-        setBankName(item)
+        if (props.transfer) {
+            setTransferBankName(item);
+        } else {
+            setBankName(item);
+        }
         setIsOpen(false);
     };
-
 
     const toggleDropDown = () => {
         setIsOpen(!isOpen);

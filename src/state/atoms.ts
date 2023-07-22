@@ -1,5 +1,10 @@
 import {atom} from "recoil";
 
+// const getTodayDate = () => {
+//   const today = new Date();
+
+// };
+
 export const emailState = atom({
   key: "emailState", // unique ID (with respect to other atoms/selectors)
   default: "", // default value (aka initial value)
@@ -60,5 +65,26 @@ export const isCheckedState = atom({
 
 export const selectedDateState = atom({
   key: "selectedDateState", // unique ID (with respect to other atoms/selectors)
-  default: "", // default value (aka initial value)
+  default: new Date(), // default value (aka initial value)
+});
+
+// for transfer
+export const isTransferState = atom({
+  key: "isTransferState",
+  default: "false",
+});
+
+export const accountDataState = atom({
+  key: "accountDataState",
+  default: null,
+});
+
+export const balanceState = atom({
+  key: "balanceState",
+  default: 0,
+});
+
+export const transferBankNameState = atom({
+  key: "transferBankNameState",
+  default: 0,
 });

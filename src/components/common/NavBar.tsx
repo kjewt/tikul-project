@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { useRecoilState } from 'recoil';
-import { emailState } from '../../state/atoms';
+import { emailState, passwordState, bankNameState, accountDataState, accountState } from '../../state/atoms';
 
 const NavBar = () => {
     const [email, setEmail] = useRecoilState(emailState);
+    const [password, setPassword] = useRecoilState(passwordState);
+    const [bankName, setBankName] = useRecoilState(bankNameState);
+    const [accountData, setAccountData] = useRecoilState(accountDataState);
+    const [account, setAccount] = useRecoilState(accountState);
+
     const storedUser = sessionStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
 
@@ -17,8 +22,18 @@ const NavBar = () => {
         }
     }, [setEmail]);
 
+    // 로그아웃 시에 실행되는 함수
+    const handleLogout = () => {
+        // 여기서 emailState, bankNameState, accountDataState, accountState를 초기값으로 돌립니다.
+        setEmail(''); // 이메일 초기값으로 설정
+        setBankName(''); // 은행명 초기값으로 설정
+        setAccountData(null); // 계좌 데이터 초기값으로 설정
+        setAccount(''); // 계좌 초기값으로 설정
+        setPassword('')
 
-
+        // 로그아웃 로직 추가 (예를 들어, 세션 스토리지 삭제)
+        sessionStorage.removeItem('user');
+    };
 
     return (
         <div className="navbar bg-base-100 shadow-md">
@@ -47,7 +62,7 @@ const NavBar = () => {
                             </a>
                         </li>
                         <li><Link to="/add">Settings</Link></li>
-                        <li><Link to="/">Logout</Link></li>
+                        <li><Link to="/" onClick={handleLogout}>Logout</Link></li>
                     </ul>
                 </div>
             </div>
