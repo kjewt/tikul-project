@@ -22,7 +22,6 @@ const BtnLogin = (): JSX.Element => {
         try {
             await signInWithEmailAndPassword(firebaseAuth, email, password);
             console.log('로그인 성공!');
-            console.log(firebaseAuth);
             setIsLogin(true);
 
             // 쿠키에 사용자 정보 저장

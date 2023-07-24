@@ -18,7 +18,8 @@ const EmailCheck = (): JSX.Element => {
             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
                 if (!isValidEmail) {
                     setEmail('');
-                    setIsValidEmail(true);
+                    setIsValidEmail(true)
+                    setIsEmail(true);
                 }
             }
         };
@@ -34,8 +35,10 @@ const EmailCheck = (): JSX.Element => {
         const newEmail = event.target.value;
         setEmail(newEmail);
         setIsValidEmail(true);
+        setIsEmail(true)
         if (!isEmailValid(newEmail)) {
             setIsValidEmail(false);
+            setIsEmail(false)
         }
     };
 

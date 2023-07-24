@@ -37,7 +37,7 @@ const TransferList = (): JSX.Element => {
             // Firestore에서 거래 내역을 가져오는 함수
             fetchTransactions();
         }
-    }, [selectedDate, description, amount, isWithdrawal]);
+    }, [userRef]);
     // withdrawal 상태를 변경하는 최적화된 함수
     const toggleWithdrawal = () => {
         setIsWithdrawal(prev => !prev);
@@ -159,7 +159,7 @@ const TransferList = (): JSX.Element => {
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-sm px-1">{transaction.isWithdrawal ? '-' : '+'}</span>
+                                    <span className="text-sm">{transaction.isWithdrawal ? '-' : '+'}</span>
                                     <span className="text-sm">{transaction.amount.toLocaleString()}원</span>
                                 </div>
 

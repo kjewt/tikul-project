@@ -3,14 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBp1GBpOjLTUVZNA12bc8HeJzaVREdYuD0",
-  authDomain: "project-fintech-c29d3.firebaseapp.com",
-  databaseURL: "https://project-fintech-c29d3-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "project-fintech-c29d3",
-  storageBucket: "project-fintech-c29d3.appspot.com",
-  messagingSenderId: "717110448677",
-  appId: "1:717110448677:web:e4f0fffc2b04806bd665cc",
-  measurementId: "G-6E60VPTB2F"
+  apiKey: "AIzaSyATc07FWAzzUyjjisGunZJkBOjYivlMf0U",
+  authDomain: "tikul3.firebaseapp.com",
+  projectId: "tikul3",
+  storageBucket: "tikul3.appspot.com",
+  messagingSenderId: "76955789566",
+  appId: "1:76955789566:web:6462fd136028b213115daf"
 };
 // apiKey: import.meta.env.VITE_API_KEY,
 // authDomain: import.meta.env.VITE_AUTH_DOMAIN,

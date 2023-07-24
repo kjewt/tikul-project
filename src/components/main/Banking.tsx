@@ -7,16 +7,17 @@ import { useRecoilState } from 'recoil';
 import TransferList from './TransferList';
 
 const Banking = (): JSX.Element => {
-    const [user, setUser] = useState<any>(null); // 사용자 정보 상태를 추가
     const db = getFirestore(firebaseApp);
-    const userRef = user ? doc(db, 'users', user.uid) : null;
+    const currentUser = firebaseAuth.currentUser;
+    const uid = currentUser ? currentUser.uid : null; // currentUser가 null이 아닌 경우에만 uid 가져오기
+    const [user, setUser] = useState<any>(currentUser); // 사용자 정보 상태를 currentUser로 초기화
+    const userRef = uid ? doc(db, 'users', uid) : null; // uid가 null이 아닌 경우에만 userRef 생성
 
     const [accountData, setAccountData] = useRecoilState(accountDataState)
     const [bankName, setBankName] = useRecoilState(bankNameState)
     const [balance, setBalance] = useRecoilState(balanceState);
     const [isTransfer, setIsTransfer] = useRecoilState(isTransferState)
 
-    // Firebase 인증 상태가 변경될 때마다 호출되는 콜백 함수
     const authStateChanged = (currentUser: any) => {
         setUser(currentUser);
     };
@@ -25,31 +26,39 @@ const Banking = (): JSX.Element => {
         // Firebase 인증 상태 변경 이벤트 리스너 등록
         const unsubscribe = firebaseAuth.onAuthStateChanged(authStateChanged);
 
+        // 컴포넌트가 언마운트 될 때 이벤트 리스너 해제
         return () => {
-            // 컴포넌트가 언마운트 될 때 이벤트 리스너 해제
             unsubscribe();
         };
     }, []);
 
     useEffect(() => {
-        if (!userRef) return;
-
-        const fetchAccountData = async () => {
-            try {
-                const accountDoc = await getDoc(userRef);
-                if (accountDoc.exists()) {
-                    const data = accountDoc.data();
-                    setAccountData(data);
-                    setBankName(data.bankName);
-                    setBalance(data.balance);
-                }
-            } catch (error) {
-                console.log('계좌 데이터 가져오기 실패', error);
+        // fetchAccountData 함수 내에서 userRef를 참조할 때에만 실행되도록 함
+        const fetchUserData = async () => {
+            if (userRef) {
+                fetchAccountData();
             }
         };
 
-        fetchAccountData();
-    }, [userRef]);
+        fetchUserData();
+    }, [userRef]); // userRef가 변경될 때마다 실행
+
+    const fetchAccountData = async () => {
+        try {
+            const accountDoc = await getDoc(userRef);
+            if (accountDoc.exists()) {
+                const data = accountDoc.data();
+
+                setAccountData(data);
+                setBankName(data.bankName);
+                setBalance(data.balance);
+                console.log('데이터 가져오기 성공');
+            }
+        } catch (error) {
+            console.log('계좌 데이터 가져오기 실패', error);
+            console.log(user, accountData, bankName, balance);
+        }
+    };
 
     const handleTransferBtn = () => {
         setIsTransfer(prev => !prev);

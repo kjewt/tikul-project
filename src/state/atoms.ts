@@ -39,27 +39,27 @@ export const accountPasswordState = atom({
 
 export const isEmailState = atom({
   key: "isEmailState",
-  default: "false",
+  default: false,
 });
 
 export const isSamePassportState = atom({
   key: "isSamePassportState",
-  default: "false",
+  default: false,
 });
 
 export const isAccountState = atom({
   key: "isAccountState",
-  default: "false",
+  default: false,
 });
 
 export const isSameAccountPassportState = atom({
   key: "isSameAccountPassportState",
-  default: "false",
+  default: false,
 });
 
 export const isCheckedState = atom({
   key: "isCheckedState",
-  default: "false",
+  default: false,
 });
 // for adding
 
@@ -71,7 +71,7 @@ export const selectedDateState = atom({
 // for transfer
 export const isTransferState = atom({
   key: "isTransferState",
-  default: "false",
+  default: false,
 });
 
 export const accountDataState = atom({

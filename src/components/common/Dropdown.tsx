@@ -12,7 +12,8 @@ const DropDown = (props): JSX.Element => {
         setSelectedItem(item);
         if (props.transfer) {
             setTransferBankName(item);
-        } else {
+        }
+        if (props.transfer === false) {
             setBankName(item);
         }
         setIsOpen(false);

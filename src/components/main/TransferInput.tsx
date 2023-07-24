@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { doc, getFirestore, collection, query, where, getDocs, addDoc, updateDoc, increment } from 'firebase/firestore';
+
+import React, { useState } from 'react';
+import { doc, getFirestore, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { firebaseApp, firebaseAuth } from '../../../firebase';
 import { useRecoilState } from 'recoil';
 import { transferBankNameState, isTransferState } from '../../state/atoms';
@@ -8,36 +9,25 @@ import { updateCurrentUser } from 'firebase/auth';
 
 const TransferInput = (): JSX.Element => {
     const db = getFirestore(firebaseApp);
-    const [user, setUser] = useState(null)
     const [accountNumber, setAccountNumber] = useState('');
     const [transferAmount, setTransferAmount] = useState('');
     const [password, setPassword] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
     const [isTransfer, setIsTransfer] = useRecoilState(isTransferState)
-
-    const authStateChanged = (currentUser: any) => {
-        setUser(currentUser)
-    }
-    useEffect(() => {
-        // Firebase 인증 상태 변경 이벤트 리스너 등록
-        const unsubscribe = firebaseAuth.onAuthStateChanged(authStateChanged);
-
-        return () => {
-            // 컴포넌트가 언마운트 될 때 이벤트 리스너 해제
-            unsubscribe();
-        };
-    }, []);
     const handleTransfer = async () => {
         try {
+            // 입력된 은행 이름과 계좌번호로 유저 검색
             const usersRef = collection(db, 'users');
             const q = query(usersRef, where('bankName', '==', transferBankName), where('account', '==', accountNumber));
             const querySnapshot = await getDocs(q);
 
+            // 입력한 은행 이름과 계좌번호와 일치하는 유저가 찾아지면
             if (!querySnapshot.empty) {
+                // 결과가 여러 개일 수 있지만 이 예시에서는 하나의 유저만 찾는 것으로 가정합니다.
                 const userDoc = querySnapshot.docs[0];
                 const userRef = doc(db, 'users', userDoc.id);
 
-                // 송금 받는 유저의 "details" 컬렉션에 송금 내역 추가
+                // 유저의 "details" 컬렉션에 송금 내역 추가
                 const detailsRef = collection(db, 'users', userDoc.id, 'details');
                 await addDoc(detailsRef, {
                     amount: transferAmount,
@@ -46,41 +36,25 @@ const TransferInput = (): JSX.Element => {
                     category: "입금",
                     date: new Date(),
                 });
-
-                // 송금받는 유저의 계좌에 transferAmount 더하기
-                await updateDoc(userRef, {
-                    balance: increment(parseFloat(transferAmount)),
+                // 유저의 "details" 컬렉션에 송금 내역 추가
+                const user = firebaseAuth.currentUser
+                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                await addDoc(currentUserDetailsRef, {
+                    amount: transferAmount,
+                    description: "",
+                    isWithdrawal: true,
+                    category: "송금",
+                    date: new Date(),
                 });
 
-                // 송금하는 유저 정보 가져오기
-                const currentUser = firebaseAuth.currentUser;
-                if (currentUser) {
-                    const currentUserRef = doc(db, 'users', currentUser.uid);
-                    const currentUserSnapshot = await getDocs(currentUserRef);
 
-                    if (currentUserSnapshot.exists()) {
-                        const currentUserDoc = currentUserSnapshot.data();
-                        const currentUserBalance = currentUserDoc.balance || 0;
-                        const updatedCurrentUserBalance = currentUserBalance - parseFloat(transferAmount);
+                // 송금 성공 후 입력 필드 초기화
+                setAccountNumber('');
+                setTransferAmount('');
+                setPassword('');
 
-                        // 송금 하는 유저의 계좌에 transferAmount 빼기
-                        await updateDoc(currentUserRef, {
-                            balance: updatedCurrentUserBalance,
-                        });
-
-                        // 송금 성공 후 입력 필드 초기화
-                        setAccountNumber('');
-                        setTransferAmount('');
-                        setPassword('');
-
-                        console.log('송금 성공! 유저에게 내역이 추가되었습니다.');
-                        setIsTransfer((prev) => !prev);
-                    } else {
-                        console.log('송금하는 유저 정보를 찾을 수 없습니다.');
-                    }
-                } else {
-                    console.log('사용자 정보를 찾을 수 없습니다. 로그인 되어 있는지 확인해주세요.');
-                }
+                console.log('송금 성공! 유저에게 내역이 추가되었습니다.');
+                setIsTransfer(prev => !prev);
             } else {
                 console.log('입력한 은행 이름과 계좌번호와 일치하는 유저를 찾을 수 없습니다.');
             }
@@ -111,7 +85,7 @@ const TransferInput = (): JSX.Element => {
                         <span className="label-text">얼마를 보낼까요?</span>
                     </label>
                     <input
-                        type="text"
+                        type="number"
                         value={transferAmount}
                         onChange={(e) => setTransferAmount(e.target.value)}
                         placeholder=""
@@ -140,5 +114,4 @@ const TransferInput = (): JSX.Element => {
     );
 };
 
-
-export default TransferInput
+export default TransferInput;
