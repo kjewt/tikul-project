@@ -16,6 +16,7 @@ const BtnLogin = (): JSX.Element => {
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
     const [isLogin, setIsLogin] = useState(true);
+    const user = firebaseAuth.currentUser
 
 
     const Login = async () => {
@@ -36,7 +37,10 @@ const BtnLogin = (): JSX.Element => {
     console.log(isLogin);
     useEffect(() => {
         if (email) {
-            sessionStorage.setItem('user', JSON.stringify({ email }));
+            sessionStorage.setItem('user', JSON.stringify({
+                email: user.email,
+                user: user.uid
+            }));
         }
     }, []);
 

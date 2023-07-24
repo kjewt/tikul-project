@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { firebaseAuth, firebaseApp } from '../../../firebase';
-import { doc, setDoc, collection, getFirestore } from 'firebase/firestore';
+import { doc, setDoc, collection, addDoc, getFirestore } from 'firebase/firestore';
 import {
     emailState,
     passwordState,
@@ -28,15 +28,13 @@ const BtnAddAccount = (): JSX.Element => {
     const [password, setPassword] = useRecoilState(passwordState);
     const [account, setAccount] = useRecoilState(accountState);
     const [accountPassword, setAccountPassword] = useRecoilState(accountPasswordState);
-    //이 계정에 계좌가 생성되었는지를 알려주는 변수 수정필요 !
-    const isRegiste = true
 
-    const checkList = [isEmail, isSamePassport, isAccount, Boolean(bankName), isSameAccount];
+    const isRegiste = true;
+    const checkList = [isSamePassport, isAccount, Boolean(bankName)];
     const isAllTrue = checkList.every((value) => value);
 
-    const db = getFirestore(firebaseApp)
+    const db = getFirestore(firebaseApp);
 
-    // 지울 영역
     useEffect(() => {
         console.log(account, bankName, accountPassword);
     }, [account, bankName, accountPassword]);
@@ -44,21 +42,15 @@ const BtnAddAccount = (): JSX.Element => {
     const Register = async () => {
         try {
             const user = firebaseAuth.currentUser;
-            console.log(user)
-            console.log(db)
             if (user) {
                 const userData = {
-                    email: email,
                     account: account,
                     bankName: bankName,
                     accountPassword: accountPassword,
                     balance: 0,
-                    details: {},
                 };
-                console.log(userData)
-                const userCollectionRef = collection(db, "users");
-                const userDocRef = doc(userCollectionRef, user.uid);
-                await setDoc(userDocRef, userData);
+                const userRef = doc(db, "users", user.uid);
+                await setDoc(userRef, userData);
 
                 console.log('등록완료');
             }
@@ -70,11 +62,10 @@ const BtnAddAccount = (): JSX.Element => {
     return (
         <>
             <div className="form-control my-6">
-                <Link to="/home"><button
-                    className={`btn btn-primary w-full ${isAllTrue ? '' : 'btn-disabled'}`}
-                    onClick={Register}>
-                    등록하기
-                </button>
+                <Link to="/home">
+                    <button className="btn btn-primary w-full" onClick={Register}>
+                        등록하기
+                    </button>
                 </Link>
             </div>
         </>

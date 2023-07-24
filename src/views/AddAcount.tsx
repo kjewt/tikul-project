@@ -26,7 +26,7 @@ const Join = (): JSX.Element => {
                             {/* 계좌 입력 */}
                             <Account />
                             {/* 은행선택 드롭다운 */}
-                            <DropDown transfer="false" />
+                            <DropDown transfer={false} />
                             <AccountPasswordCheck />
                             {/* 회원가입하기 버튼*/}
                             <BtnAddAcount />

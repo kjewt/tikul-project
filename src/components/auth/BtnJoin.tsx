@@ -35,8 +35,6 @@ const BtnJoin = (): JSX.Element => {
     const isAllTrue = checkList.every((value) => value);
 
     // 지울 영역
-    console.log(checkList)
-    console.log(bankName)
 
     const db = getFirestore(firebaseApp)
 
@@ -57,7 +55,6 @@ const BtnJoin = (): JSX.Element => {
                     bankName: bankName,
                     accountPassword: accountPassword,
                     balance: 0,
-                    details: {},
                 };
                 await setDoc(doc(db, "users", user.uid), userData);
 

@@ -65,14 +65,13 @@ const Transfer = (): JSX.Element => {
                         <button onClick={handleTransferCancelBtn} className="px-4 pt-4 text-sm link-primary underline">이전으로</button>
                         {accountData && (
                             <>
-                                <div className="user-account p-4 text-sm flex justify-between">
+                                <div className="user-account px-4 pt-4 text-sm flex justify-between">
                                     <div>
                                         <span>내 계좌 |</span>
                                         <span className="p-1">{bankName}</span>
                                         <span className="p-1">{accountData.account}</span>
                                     </div>
                                 </div>
-                                <div className="account-balance px-4 text-right text-xl">{balance}원</div>
 
                             </>)}
                         <TransferInput />

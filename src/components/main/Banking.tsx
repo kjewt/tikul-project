@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { firebaseAuth, firebaseApp } from '../../../firebase';
 import { isTransferState, balanceState, accountDataState, bankNameState } from '../../state/atoms'
@@ -8,19 +9,18 @@ import TransferList from './TransferList';
 
 const Banking = (): JSX.Element => {
     const db = getFirestore(firebaseApp);
-    const currentUser = firebaseAuth.currentUser;
-    const uid = currentUser ? currentUser.uid : null; // currentUser가 null이 아닌 경우에만 uid 가져오기
-    const [user, setUser] = useState<any>(currentUser); // 사용자 정보 상태를 currentUser로 초기화
-    const userRef = uid ? doc(db, 'users', uid) : null; // uid가 null이 아닌 경우에만 userRef 생성
-
+    const [user, setUser] = useState<any>(null);
     const [accountData, setAccountData] = useRecoilState(accountDataState)
     const [bankName, setBankName] = useRecoilState(bankNameState)
     const [balance, setBalance] = useRecoilState(balanceState);
-    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState)
+    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState);
+    const navigate = useNavigate();
 
     const authStateChanged = (currentUser: any) => {
         setUser(currentUser);
     };
+
+
 
     useEffect(() => {
         // Firebase 인증 상태 변경 이벤트 리스너 등록
@@ -33,18 +33,19 @@ const Banking = (): JSX.Element => {
     }, []);
 
     useEffect(() => {
-        // fetchAccountData 함수 내에서 userRef를 참조할 때에만 실행되도록 함
+        // fetchUserData 함수 내에서 userRef를 참조할 때에만 실행되도록 함
         const fetchUserData = async () => {
-            if (userRef) {
-                fetchAccountData();
+            if (user) {
+                await fetchAccountData(user.uid);
             }
         };
 
         fetchUserData();
-    }, [userRef]); // userRef가 변경될 때마다 실행
+    }, [user]); // bal가 변경될 때마다 실행
 
-    const fetchAccountData = async () => {
+    const fetchAccountData = async (uid: string) => {
         try {
+            const userRef = doc(db, 'users', uid);
             const accountDoc = await getDoc(userRef);
             if (accountDoc.exists()) {
                 const data = accountDoc.data();
@@ -56,13 +57,13 @@ const Banking = (): JSX.Element => {
             }
         } catch (error) {
             console.log('계좌 데이터 가져오기 실패', error);
-            console.log(user, accountData, bankName, balance);
         }
     };
 
     const handleTransferBtn = () => {
         setIsTransfer(prev => !prev);
     }
+
 
     return (
         <div className="container min-h-screen">

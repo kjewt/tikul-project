@@ -71,7 +71,7 @@ export const selectedDateState = atom({
 // for transfer
 export const isTransferState = atom({
   key: "isTransferState",
-  default: false,
+  default: true,
 });
 
 export const accountDataState = atom({
@@ -86,5 +86,5 @@ export const balanceState = atom({
 
 export const transferBankNameState = atom({
   key: "transferBankNameState",
-  default: 0,
+  default: "",
 });

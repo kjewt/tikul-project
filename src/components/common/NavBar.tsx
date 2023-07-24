@@ -50,20 +50,10 @@ const NavBar = () => {
 
                 {/* 프로필 */}
                 <div className="dropdown dropdown-end">
-                    <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                        <button className="btn btn-circle btn-ghost">
-                            <i className='bx bxs-user text-2xl' ></i>
-                        </button>
-                    </label>
-                    <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-                        <li>
-                            <a className="justify-between">
-                                Profile
-                            </a>
-                        </li>
-                        <li><Link to="/add">Settings</Link></li>
-                        <li><Link to="/" onClick={handleLogout}>Logout</Link></li>
-                    </ul>
+                    <button className="btn btn-circle btn-ghost" onClick={handleLogout}>
+                        <i className='bx bx-log-out text-2xl'></i>
+                    </button>
+
                 </div>
             </div>
         </div>

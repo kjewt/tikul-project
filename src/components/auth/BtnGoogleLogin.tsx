@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { emailState, passwordState } from '../../state/atoms';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { firebaseAuth } from '../../../firebase';
+import { firebaseAuth, firebaseApp } from '../../../firebase';
+
+import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
 
 const BtnGoogleLogin = (): JSX.Element => {
     const navigate = useNavigate();
+    const db = getFirestore(firebaseApp);
 
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
@@ -18,6 +21,28 @@ const BtnGoogleLogin = (): JSX.Element => {
             const result = await signInWithPopup(firebaseAuth, provider);
             const user = result.user;
 
+            if (user) {
+                const userData = {
+                    email: user.email,
+                };
+                const userRef = doc(db, "users", user.uid);
+
+                // 사용자 정보를 Firestore에 저장
+                await setDoc(userRef, userData);
+
+                // 데이터를 가져와서 bankName이 있는지 확인
+                const accountDoc = await getDoc(userRef);
+                const data = accountDoc.data();
+
+                if (!data.bankName) {
+                    // bankName이 없는 경우, 추가 정보 입력 페이지로 이동
+                    navigate('/add');
+                } else {
+                    // bankName이 있는 경우, Home 페이지로 이동
+                    navigate('/Home');
+                }
+            }
+
             setEmail(user.email);
             console.log('로그인 성공!');
             console.log('사용자 이메일:', user.email);
@@ -27,11 +52,10 @@ const BtnGoogleLogin = (): JSX.Element => {
             sessionStorage.setItem('user', JSON.stringify({
                 email: user.email,
                 displayName: user.displayName,
+                user: user.uid
             }));
-
-            navigate('/Home');
         } catch (error) {
-            alert('로그인에 실패했습니다.');
+            alert('로그인에 실패했습니다.', error);
         }
     };
 
