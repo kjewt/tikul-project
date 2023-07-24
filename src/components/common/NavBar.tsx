@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil';
 import { emailState, passwordState, bankNameState, accountDataState, accountState } from '../../state/atoms';
 
@@ -12,6 +12,7 @@ const NavBar = () => {
 
     const storedUser = sessionStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
+    const navigate = useNavigate()
 
     useEffect(() => {
         // 페이지 로드 시에 스토리지에서 사용자 정보 가져오기
@@ -33,6 +34,7 @@ const NavBar = () => {
 
         // 로그아웃 로직 추가 (예를 들어, 세션 스토리지 삭제)
         sessionStorage.removeItem('user');
+        navigate('/login')
     };
 
     return (

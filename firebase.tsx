@@ -3,13 +3,15 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore/lite";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyATc07FWAzzUyjjisGunZJkBOjYivlMf0U",
-  authDomain: "tikul3.firebaseapp.com",
-  projectId: "tikul3",
-  storageBucket: "tikul3.appspot.com",
-  messagingSenderId: "76955789566",
-  appId: "1:76955789566:web:6462fd136028b213115daf"
+  apiKey: "AIzaSyBpkxfL2gb50ccmdq5DRzySsGKGk41wBW4",
+  authDomain: "tikul-2023.firebaseapp.com",
+  projectId: "tikul-2023",
+  storageBucket: "tikul-2023.appspot.com",
+  messagingSenderId: "805310369374",
+  appId: "1:805310369374:web:dc508a81072de3d33b2ecf",
+  measurementId: "G-ZZXWPEP6CE"
 };
+
 // apiKey: import.meta.env.VITE_API_KEY,
 // authDomain: import.meta.env.VITE_AUTH_DOMAIN,
 // projectId: import.meta.env.VITE_PROJECT_ID,

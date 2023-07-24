@@ -8,6 +8,7 @@ import Home from './views/Home'
 import AddAcount from './views/AddAcount'
 import ScrollToTop from './components/common/ScrollToTop';
 import TransferComplete from './components/main/TransferComplete';
+import Keypad from './components/common/KeyPad';
 
 const App = (): JSX.Element => {
   return (
@@ -20,6 +21,7 @@ const App = (): JSX.Element => {
           <Route path="/home" element={<Home />} />
           <Route path="/add" element={<AddAcount />} />
           <Route path="/complete" element={<TransferComplete />} />
+          <Route path="/keypad" element={<Keypad />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </section>

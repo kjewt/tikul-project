@@ -1,23 +1,26 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { doc, getFirestore, collection, query, where, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 import { firebaseApp, firebaseAuth } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { transferBankNameState, isTransferState, balanceState } from '../../state/atoms';
+import { transferBankNameState, isTransferState, balanceState, accountPasswordState } from '../../state/atoms';
 import DropDown from '../common/Dropdown';
+import Keypad from '../common/KeyPad';
 
 
 const TransferInput = (): JSX.Element => {
     const db = getFirestore(firebaseApp);
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const [accountNumber, setAccountNumber] = useState('');
     const [balance, setBalance] = useRecoilState(balanceState)
     const [transferAmount, setTransferAmount] = useState('');
     const [password, setPassword] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
+    const [accountPassword, setAccountPassword] = useRecoilState(accountPasswordState);
     const [isTransfer, setIsTransfer] = useRecoilState(isTransferState)
     const [isComplete, setIsComplete] = useState(false)
+    const [isOpenKeypad, setIsOpenKeypad] = useState(false)
     const handleTransfer = async () => {
         try {
             // 입력된 은행 이름과 계좌번호로 유저 검색
@@ -27,6 +30,23 @@ const TransferInput = (): JSX.Element => {
 
             // 입력한 은행 이름과 계좌번호와 일치하는 유저가 찾아지면
             if (!querySnapshot.empty) {
+
+
+
+                // 송금하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
+                const user = firebaseAuth.currentUser
+                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                await addDoc(currentUserDetailsRef, {
+                    amount: transferAmount,
+                    description: "",
+                    isWithdrawal: true,
+                    category: "송금",
+                    date: new Date(),
+                });
+
+                await updateDoc(doc(db, 'users', user.uid), {
+                    balance: userDoc.data().balance - Number(transferAmount),
+                });
                 // 결과가 여러 개일 수 있지만 이 예시에서는 하나의 유저만 찾는 것으로 가정합니다.
                 const userDoc = querySnapshot.docs[0];
                 const userRef = doc(db, 'users', userDoc.id);
@@ -45,20 +65,7 @@ const TransferInput = (): JSX.Element => {
                 });
 
 
-                // 송금하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
-                const user = firebaseAuth.currentUser
-                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
-                await addDoc(currentUserDetailsRef, {
-                    amount: transferAmount,
-                    description: "",
-                    isWithdrawal: true,
-                    category: "송금",
-                    date: new Date(),
-                });
 
-                await updateDoc(doc(db, 'users', user.uid), {
-                    balance: userDoc.data().balance - Number(transferAmount),
-                });
 
 
                 // 송금 성공 후 입력 필드 초기화
@@ -76,12 +83,21 @@ const TransferInput = (): JSX.Element => {
         }
     };
 
+    // const handleKeypadButtonClick = (number: number) => {
+    //     setPassword((prevPassword) => prevPassword + number)
+    // }
+
 
     const handelToHome = () => {
         setIsComplete(false);
         setIsTransfer(true)
-
     }
+
+    const openKeypad = () => {
+        setIsOpenKeypad((prev) => !prev)
+    }
+
+
 
     return (
         <>
@@ -116,23 +132,31 @@ const TransferInput = (): JSX.Element => {
                             value={transferAmount}
                             onChange={(e) => setTransferAmount(e.target.value)}
                             placeholder=""
-                            className="input input-bordered input-primary"
+                            className={`input input-bordered ${Number(transferAmount) > balance ? "input-error" : "input-primary"}`}
                         />
+
+                        {Number(transferAmount) > balance && (
+                            <span className="password-error text-sm text-error ml-1 mt-1">
+                                출금계좌 잔고 부족. 현재 잔고는 {balance}원 입니다.
+                            </span>
+                        )}
                     </div>
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text">비밀번호</span>
+                            <span className="label-text">계좌 비밀번호</span>
                         </label>
                         <input
-                            type="password"
+                            type="text"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder=""
+                            onClick={openKeypad}
+                            placeholder="6자리 비밀번호를 입력하세요."
                             className="input input-bordered input-primary"
                         />
+                        {isOpenKeypad ? <Keypad /> : ''}
                     </div>
                     <div className="form-control my-6">
-                        <button className="btn btn-primary w-full text-base-100" onClick={handleTransfer}>
+                        <button className={`btn btn-primary w-full text-base-100 ${Number(transferAmount) > balance ? "btn-disabled" : ""}`} onClick={handleTransfer}>
                             송금
                         </button>
                     </div>
