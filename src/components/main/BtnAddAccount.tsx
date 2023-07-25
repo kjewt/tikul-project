@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
-import { doc, setDoc, collection, addDoc, getFirestore } from 'firebase/firestore';
+import { firebaseAuth, db } from '../../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import {
     emailState,
     passwordState,
@@ -33,7 +33,6 @@ const BtnAddAccount = (): JSX.Element => {
     const checkList = [isSamePassport, isAccount, Boolean(bankName)];
     const isAllTrue = checkList.every((value) => value);
 
-    const db = getFirestore(firebaseApp);
 
     useEffect(() => {
         console.log(account, bankName, accountPassword);

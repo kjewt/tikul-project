@@ -14,8 +14,8 @@ import {
     isCheckedState,
 } from '../../state/atoms';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
-import { doc, setDoc, getFirestore } from 'firebase/firestore'
+import { firebaseAuth, db } from '../../../firebase';
+import { doc, setDoc } from 'firebase/firestore'
 
 const BtnJoin = (): JSX.Element => {
     const navigate = useNavigate();
@@ -36,7 +36,6 @@ const BtnJoin = (): JSX.Element => {
 
     // 지울 영역
 
-    const db = getFirestore(firebaseApp)
 
     const Signup = async () => {
         try {

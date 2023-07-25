@@ -32,6 +32,7 @@ const Password = (): JSX.Element => {
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
+        console.log('password useEffect 실행됨!');
     }, []);
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {

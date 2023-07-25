@@ -42,6 +42,7 @@ const BtnLogin = (): JSX.Element => {
                 user: user.uid
             }));
         }
+        console.log('btnLogin useEffect 실행됨!');
     }, []);
 
 

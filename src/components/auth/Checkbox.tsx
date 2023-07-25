@@ -19,6 +19,7 @@ const Checkbox = (): JSX.Element => {
 
     useEffect(() => {
         handleCheckboxChange();
+        console.log('checkbox useEffect 실행됨!');
     }, [isChecked]);
 
     return (

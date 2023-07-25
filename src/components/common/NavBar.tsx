@@ -21,6 +21,7 @@ const NavBar = () => {
             const user = JSON.parse(storedUser);
             setEmail(user.email);
         }
+        console.log('nav useEffect 실행됨!');
     }, [setEmail]);
 
     // 로그아웃 시에 실행되는 함수

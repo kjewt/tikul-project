@@ -6,6 +6,7 @@ export default function ScrollToTop() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        console.log('scrolltotop : useEffect 실행됨!');
     }, [pathname]);
 
     return null;

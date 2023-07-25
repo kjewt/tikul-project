@@ -1,7 +1,4 @@
 import { Link } from 'react-router-dom';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { useRecoilState } from 'recoil';
-import { accountState, emailState, passwordState, accountPasswordState, isCheckedState } from '../state/atoms';
 
 import DropDown from '../components/common/Dropdown';
 import EmailCheck from '../components/auth/EmailCheck';

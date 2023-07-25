@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { passwordState, isSamePassportState } from '../../state/atoms';
 
@@ -40,6 +40,8 @@ const PasswordCheck = (): JSX.Element => {
         } else {
             setPassword(null);
         }
+
+        console.log('Passwordcheck: useEffect 실행됨!');
     }, [comparingPassword, isSame, password, prePassword, setPassword]);
 
     useEffect(() => {

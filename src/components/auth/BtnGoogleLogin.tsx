@@ -1,18 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { emailState, passwordState } from '../../state/atoms';
+import { emailState, passwordState, accountDataState } from '../../state/atoms';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
+import { firebaseAuth, db } from '../../../firebase';
 
 import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
 
 const BtnGoogleLogin = (): JSX.Element => {
     const navigate = useNavigate();
-    const db = getFirestore(firebaseApp);
 
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
+    const [accountData, setAccountData] = useRecoilState(accountDataState)
 
     const provider = new GoogleAuthProvider();
 
@@ -28,11 +28,12 @@ const BtnGoogleLogin = (): JSX.Element => {
                 const userRef = doc(db, "users", user.uid);
 
                 // 사용자 정보를 Firestore에 저장
-                await setDoc(userRef, userData);
+                await setDoc(userRef, userData, { merge: true });
 
                 // 데이터를 가져와서 bankName이 있는지 확인
                 const accountDoc = await getDoc(userRef);
                 const data = accountDoc.data();
+                setAccountData(data);
 
                 if (!data.bankName) {
                     // bankName이 없는 경우, 추가 정보 입력 페이지로 이동

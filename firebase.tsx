@@ -1,15 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore/lite";
+import { collection, getFirestore, where, getDocs, doc, query } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBpkxfL2gb50ccmdq5DRzySsGKGk41wBW4",
-  authDomain: "tikul-2023.firebaseapp.com",
-  projectId: "tikul-2023",
-  storageBucket: "tikul-2023.appspot.com",
-  messagingSenderId: "805310369374",
-  appId: "1:805310369374:web:dc508a81072de3d33b2ecf",
-  measurementId: "G-ZZXWPEP6CE"
+  apiKey: "AIzaSyApB3MMgBUOgg-Vq_a8q9GPDgMPC2aReI0",
+  authDomain: "tikul-project.firebaseapp.com",
+  projectId: "tikul-project",
+  storageBucket: "tikul-project.appspot.com",
+  messagingSenderId: "1007281077741",
+  appId: "1:1007281077741:web:5b6442989cce1a157d3be4"
 };
 
 // apiKey: import.meta.env.VITE_API_KEY,
@@ -39,4 +38,22 @@ export const db = getFirestore(firebaseApp);
 //   firebaseApp,
 //   firebaseAuth,
 //   firebaseFirestore,
+// };
+// export const fetchFirestoreUserData = async (userId: string) => {
+//   try {
+//     const usersRef = collection(db, 'users');
+//     const userDoc = await doc(usersRef, userId).get();
+
+//     if (userDoc.exists()) {
+//       const userData = userDoc.data();
+//       console.log('회원 데이터를 가져왔습니다.:', userData);
+//       return userData;
+//     } else {
+//       console.log('주어진 데이터와 일치하는 user.uid가 없습니다.');
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error('회원 데이터를 가져오지 못 했습니다.:', error);
+//     return null;
+//   }
 // };

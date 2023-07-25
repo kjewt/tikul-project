@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
-import { isTransferState, balanceState, accountDataState, bankNameState } from '../../state/atoms'
+import { doc, getDoc } from 'firebase/firestore';
+import { firebaseAuth, db } from '../../../firebase';
+import { isBankingState, balanceState, accountDataState, bankNameState } from '../../state/atoms'
 import { useRecoilState } from 'recoil';
 
 import TransferList from './TransferList';
 
 const Banking = (): JSX.Element => {
-    const db = getFirestore(firebaseApp);
     const [user, setUser] = useState<any>(null);
     const [accountData, setAccountData] = useRecoilState(accountDataState)
     const [bankName, setBankName] = useRecoilState(bankNameState)
     const [balance, setBalance] = useRecoilState(balanceState);
-    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState);
-    const navigate = useNavigate();
+    const [isBanking, setIsBanking] = useRecoilState(isBankingState);
+
+
 
     const authStateChanged = (currentUser: any) => {
         setUser(currentUser);
@@ -29,6 +28,7 @@ const Banking = (): JSX.Element => {
         // 컴포넌트가 언마운트 될 때 이벤트 리스너 해제
         return () => {
             unsubscribe();
+            console.log('banking: 인증상태 useEffect 실행됨!');
         };
     }, []);
 
@@ -41,6 +41,7 @@ const Banking = (): JSX.Element => {
         };
 
         fetchUserData();
+        console.log('데이터 가져오기 useEffect 실행됨!');
     }, [user]); // bal가 변경될 때마다 실행
 
     const fetchAccountData = async (uid: string) => {
@@ -61,7 +62,11 @@ const Banking = (): JSX.Element => {
     };
 
     const handleTransferBtn = () => {
-        setIsTransfer(prev => !prev);
+        setIsBanking(1)
+    }
+
+    const handleAddMoneyBtn = () => {
+        setIsBanking(2)
     }
 
 
@@ -82,7 +87,7 @@ const Banking = (): JSX.Element => {
                             <div className="account-balance px-4 text-right text-xl">{balance}원</div>
                             <div className="btn-banking p-4 flex justify-around gap-1">
                                 <button onClick={handleTransferBtn} className="btn btn-primary text-base-100 w-1/2">송금</button>
-                                <button className="btn btn-outline btn-primary w-1/2 btn-hover">충전</button>
+                                <button onClick={handleAddMoneyBtn} className="btn btn-outline btn-primary w-1/2 btn-hover">충전</button>
                             </div>
                         </div>
                         {/* 거래내역 */}

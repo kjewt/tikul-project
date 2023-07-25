@@ -1,46 +1,50 @@
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc, addDoc, updateDoc, getFirestore, collection, getDocs } from 'firebase/firestore';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
+import { doc, getDoc, addDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { firebaseAuth, db } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { selectedDateState } from '../../state/atoms';
+import { selectedDateState, transactionsState } from '../../state/atoms';
 
 import 'react-day-picker/dist/style.css';
 import DatePicker from '../common/DatePicker';
 
 const TransferList = (): JSX.Element => {
-    const db = getFirestore(firebaseApp);
     const user = firebaseAuth.currentUser;
     const userRef = doc(db, 'users', user?.uid || '');
     const dateFormatter = new Intl.DateTimeFormat('en', { month: '2-digit', day: '2-digit' });
 
-    const [transactions, setTransactions] = useState<any[]>([]);
     const [description, setDescription] = useState<string>('');
     const [amount, setAmount] = useState<number>(0);
     const [showAddContent, setShowAddContent] = useState<boolean>(false);
     const [isWithdrawal, setIsWithdrawal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
+    const [transactions, setTransactions] = useRecoilState(transactionsState);
 
     const fetchTransactions = async () => {
         try {
             const detailsCollectionRef = collection(userRef, 'details');
             const detailsQuerySnapshot = await getDocs(detailsCollectionRef);
-            const transactionsArray = detailsQuerySnapshot.docs.map((doc) => doc.data());
+            const transactionsArray = detailsQuerySnapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    ...data,
+                    date: data.date.toDate(),
+                };
+            });
 
             setTransactions(transactionsArray);
         } catch (error) {
             console.log('거래내역 불러오기 실패', error);
         }
     };
-
     useEffect(() => {
-        if (user) {
-            // Firestore에서 거래 내역을 가져오는 함수
-            fetchTransactions();
-        }
-    }, [userRef]);
-    // withdrawal 상태를 변경하는 최적화된 함수
+
+        fetchTransactions();
+
+    }, []);
+
+
     const toggleWithdrawal = () => {
-        setIsWithdrawal(prev => !prev);
+        setIsWithdrawal((prev) => !prev);
     };
 
     const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +67,7 @@ const TransferList = (): JSX.Element => {
                 const data = userDoc.data();
                 const balance = data.balance || 0;
 
-                const detailsCollectionRef = collection(userRef, "details");
+                const detailsCollectionRef = collection(userRef, 'details');
                 const newTransaction = {
                     date: selectedDate,
                     description: description,
@@ -73,15 +77,14 @@ const TransferList = (): JSX.Element => {
                 };
                 // 새로운 거래 내역을 Firestore에 추가합니다.
                 await addDoc(detailsCollectionRef, newTransaction);
-                // 추가 후, 다시 거래 내역을 불러옵니다.
-                fetchTransactions();
+                setTransactions((prevDetails) => [...prevDetails, newTransaction]);
 
                 // 업데이트할 balance 값
                 const updatedBalance = isWithdrawal ? balance - amount : balance + amount;
                 await updateDoc(userRef, { balance: updatedBalance });
 
                 // 입력 필드 초기화
-                setSelectedDate(null);
+                setSelectedDate(new Date());
                 setDescription('');
                 setAmount(0);
                 setShowAddContent(false); // 거래 내역 추가 영역을 닫습니다.
@@ -90,6 +93,8 @@ const TransferList = (): JSX.Element => {
             console.log('거래내역 추가 실패', error);
         }
     };
+
+
 
     return (
         <>
@@ -151,7 +156,7 @@ const TransferList = (): JSX.Element => {
                         <div key={index}>
                             <div className="transaction flex justify-between text-info">
                                 <div className="transaction-info text-sm flex gap-2">
-                                    <span>{dateFormatter.format(transaction.date.toDate())}</span>
+                                    <span>{dateFormatter.format(transaction.date)}</span>
 
                                     <span>{transaction.description}</span>
                                     <span className="badge badge-primary px-1 text-sm text-base-100">

@@ -29,6 +29,7 @@ const EmailCheck = (): JSX.Element => {
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
+        console.log(' EmailCheckuseEffect 실행됨!');
     }, [isValidEmail, setEmail]);
 
     const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {

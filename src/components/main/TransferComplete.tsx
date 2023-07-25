@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { doc, getDoc, getFirestore } from 'firebase/firestore';
-import { firebaseAuth, firebaseApp } from '../../../firebase';
+import React from 'react';
 import { useRecoilState } from 'recoil';
-import { isTransferState } from '../../state/atoms'
+import { isBankingState } from '../../state/atoms'
 
 
 const TransferComplete = (): JSX.Element => {
-    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState)
-
+    const [isBanking, setIsBanking] = useRecoilState(isBankingState);
     const handelToHome = () => {
-        setIsTransfer(false)
+        setIsBanking(0)
 
     }
 

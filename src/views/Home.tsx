@@ -1,27 +1,24 @@
-import React, { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React from 'react';
 import { useRecoilState } from 'recoil';
-import { emailState, isTransferState } from '../state/atoms';
-import NavBar from '../components/common/NavBar'
+import { isBankingState } from '../state/atoms';
+import NavBar from '../components/common/NavBar';
 import Banking from '../components/main/Banking';
 import Transfer from '../components/main/Transfer';
 import Summary from '../components/main/Summary';
+import AddMoney from '../components/main/AddMoney';
 
 const Home = (): JSX.Element => {
+    const [isBanking, setIsBanking] = useRecoilState(isBankingState);
 
-    const [email, setEmail] = useRecoilState(emailState);
-    const [isTransfer, setIsTransfer] = useRecoilState(isTransferState);
-
-
-    console.log(email)
     return (
         <>
             <div className="container min-h-screen">
                 <NavBar />
                 <div className="flex">
                     <Summary />
+                    {isBanking == 0 ? <Banking /> : isBanking == 1 ? <Transfer /> : <AddMoney />}
 
-                    {isTransfer ? <Banking /> : <Transfer />}
+
                 </div>
             </div>
         </>

@@ -1,6 +1,5 @@
 import './assets/css/tailwind.css';
 import './assets/css/style.css';
-import { firebaseApp } from '../firebase';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './views/Login';
 import Join from './views/Join';
