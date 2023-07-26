@@ -95,17 +95,11 @@ const Filtering = (): JSX.Element => {
         setFilteredTransactions(sortedTransactions);
     };
 
-    useEffect(() => {
-        // 컴포넌트가 처음 렌더링될 때 최신 순으로 정렬
-        sortTransactionsByLatest();
-    }, []);
-
     //filter 함수들
     const filterInit = () => {
         setFilterClicked(1);
         setFilteredTransactions(transactions);
         sortTransactionsByLatest()
-
     };
 
     const filterThisMonth = () => {
@@ -221,9 +215,7 @@ const Filtering = (): JSX.Element => {
                         )}
                     </div>
                 </div>
-                <button>
-                    <i className="flex bx bx-search text-info text-lg"></i>
-                </button>
+
             </div>
         </>
     );

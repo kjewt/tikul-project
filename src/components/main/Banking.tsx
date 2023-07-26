@@ -77,7 +77,7 @@ const Banking = (): JSX.Element => {
                     <p className="py-3">Banking</p>
                 </div>
                 {accountData && (
-                    <div className="card w-96 bg-accent shadow-xl">
+                    <div className="card w-96 mb-10 bg-accent shadow-xl">
                         <div className="mx-3 mt-3 rounded-xl bg-base-100">
                             <div className="user-account p-4 text-sm">
                                 <span>내 계좌 |</span>
