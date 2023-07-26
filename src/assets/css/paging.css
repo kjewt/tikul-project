@@ -4,7 +4,7 @@
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 15px;
+  margin-bottom: 20px;
 }
 ul {
   list-style: none;

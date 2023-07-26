@@ -7,7 +7,7 @@ import {
     accountDataState
 } from '../../state/atoms';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection } from 'firebase/firestore';
 import { firebaseAuth, db } from '../../../firebase';
 import Modal from '../common/Modal';
 
@@ -16,8 +16,9 @@ const BtnLogin = (): JSX.Element => {
 
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
-    const [isLogin, setIsLogin] = useState(true);
     const [accountData, setAccountData] = useRecoilState(accountDataState);
+    const [isLogin, setIsLogin] = useState(true);
+    const [details, setDetails] = useState<Document>()
     const user = firebaseAuth.currentUser;
     const userRef = user ? doc(db, "users", user.uid) : null; // 예외 처리
 
@@ -31,7 +32,9 @@ const BtnLogin = (): JSX.Element => {
 
             const accountDoc = await getDoc(userRef);
             const data = accountDoc.data();
+            const detail = collection(userRef, 'details')
             setAccountData(data);
+            setDetails(detail)
 
 
             navigate('/Home'); // 회원가입 성공 후 로그인 페이지로 이동
@@ -45,6 +48,7 @@ const BtnLogin = (): JSX.Element => {
 
     if (accountData) {
         localStorage.setItem('account', JSON.stringify(accountData));
+        localStorage.setItem('uid', JSON.stringify(user.uid));
         console.log(accountData)
         console.log('저장성공!')
     }

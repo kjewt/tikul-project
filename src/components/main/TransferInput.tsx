@@ -10,11 +10,11 @@ import Keypad from '../common/KeyPad';
 
 
 const TransferInput = (): JSX.Element => {
-    // const navigate = useNavigate()
     const [accountNumber, setAccountNumber] = useState('');
     const [accountData, setAccountData] = useRecoilState(accountDataState)
     const [transferAmount, setTransferAmount] = useState('');
     const [password, setPassword] = useState('');
+    const [description, setDescription] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
     const [transactions, setTransactions] = useRecoilState(transactionsState);
     const [isBanking, setIsBanking] = useRecoilState(isBankingState);
@@ -43,8 +43,8 @@ const TransferInput = (): JSX.Element => {
                 const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
                 const addTransaction = {
                     amount: transferAmount,
-                    description: "",
-                    isWithdrawal: true,
+                    description: description,
+                    isWithdrawal: 0, // 0은 송금
                     category: "송금",
                     date: new Date(),
                 }
@@ -62,8 +62,8 @@ const TransferInput = (): JSX.Element => {
                 const detailsRef = collection(db, 'users', userDoc.id, 'details');
                 await addDoc(detailsRef, {
                     amount: transferAmount,
-                    description: "",
-                    isWithdrawal: false,
+                    description: description,
+                    isWithdrawal: 1, //1는 입금 
                     category: "입금",
                     date: new Date(),
                 });
@@ -139,6 +139,18 @@ const TransferInput = (): JSX.Element => {
                                 출금계좌 잔고 부족. 현재 잔고는 {accountData.balance}원 입니다.
                             </span>
                         )}
+                    </div>
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">메모를 남겨주세요!</span>
+                        </label>
+                        <input
+                            type="text"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="(option)"
+                            className="input input-bordered w-full input-primary"
+                        />
                     </div>
                     <div className="form-control">
                         <label className="label">

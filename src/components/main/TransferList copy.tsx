@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { doc, getDoc, addDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
 import { firebaseAuth, db } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { selectedDateState, filteredTransactionsState } from '../../state/atoms';
+import { selectedDateState, transactionsState, filteredTransactionsState } from '../../state/atoms';
 import 'react-day-picker/dist/style.css';
 import DatePicker from '../common/DatePicker';
 import Fitering from '../common/Fitering';
@@ -12,12 +12,7 @@ import '../../assets/css/paging.css'
 const TransferList = (): JSX.Element => {
     const user = firebaseAuth.currentUser;
     const userRef = user ? doc(db, "users", user.uid) : null;
-    const dateFormatter = new Intl.DateTimeFormat('en', {
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    });
+    const dateFormatter = new Intl.DateTimeFormat('en', { month: '2-digit', day: '2-digit' });
 
     const [description, setDescription] = useState<string>('');
     const [amount, setAmount] = useState<number>(0);
@@ -25,10 +20,8 @@ const TransferList = (): JSX.Element => {
     const [isWithdrawal, setIsWithdrawal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
 
-
-    const [transactions, setTransactions] = useRecoilState(filteredTransactionsState);
-    // 필터필터필터
-    const [filteredTransactions, setFilteredTransactions] = useRecoilState(filteredTransactionsState)
+    const [transactions, setTransactions] = useRecoilState(transactionsState);
+    const [filteredTransactions, setFilteredTransaction] = useRecoilState(filteredTransactionsState)
     const [count, setCount] = useState(0); // 아이템 총 개수
     const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 1로 설정
     const [postPerPage] = useState(5); // 한 페이지에 보여질 아이템 수 
@@ -40,10 +33,31 @@ const TransferList = (): JSX.Element => {
         description: string;
         amount: number;
         category: string;
-        isWithdrawal: number;
+        isWithdrawal: boolean;
     }
     const [currentTransactions, setCurrentTransactions] = useState<Transaction[]>([]);
 
+    const fetchTransactions = async () => {
+        try {
+            const detailsCollectionRef = collection(userRef, 'details');
+            const detailsQuerySnapshot = await getDocs(detailsCollectionRef);
+            const transactionsArray = detailsQuerySnapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                    ...data,
+                    date: data.date.toDate(),
+                };
+            });
+
+            setTransactions(transactionsArray);
+            setCount(transactionsArray.length); // 거래 내역 개수를 설정
+        } catch (error) {
+            console.log('거래내역 불러오기 실패', error);
+        }
+    };
+    useEffect(() => {
+        fetchTransactions();
+    }, []);
 
     const toggleWithdrawal = () => {
         setIsWithdrawal((prev) => !prev);
@@ -79,7 +93,7 @@ const TransferList = (): JSX.Element => {
                 };
                 // 새로운 거래 내역을 Firestore에 추가합니다.
                 await addDoc(detailsCollectionRef, newTransaction);
-                setFilteredTransactions((prevDetails) => [...prevDetails, newTransaction]);
+                setTransactions((prevDetails) => [...prevDetails, newTransaction]);
                 setCount((prevCount) => prevCount + 1); // 거래 내역 개수 업데이트
 
                 // 업데이트할 balance 값
@@ -96,19 +110,18 @@ const TransferList = (): JSX.Element => {
             console.log('거래내역 추가 실패', error);
         }
     };
-    useEffect(() => {
-        setCount(filteredTransactions.length);
+    React.useEffect(() => {
         setIndexOfLastPost(currentPage * postPerPage);
         setIndexOfFirstPost(indexOfLastPost - postPerPage);
-        setCurrentTransactions(filteredTransactions.slice(indexOfFirstPost, indexOfLastPost));
-    }, [currentPage, indexOfFirstPost, indexOfLastPost, filteredTransactions, postPerPage]);
-
+        setCurrentTransactions(transactions.slice(indexOfFirstPost, indexOfLastPost));
+    }, [currentPage, indexOfFirstPost, indexOfLastPost, transactions, postPerPage]);
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
 
-
+    console.log(count / postPerPage)
+    console.log(indexOfFirstPost)
 
     return (
         <>
@@ -164,16 +177,15 @@ const TransferList = (): JSX.Element => {
                         <div key={index}>
                             <div className="transaction flex justify-between text-info">
                                 <div className="transaction-info text-sm flex gap-2">
-                                    <span className="text-[12px] flex items-center">{dateFormatter.format(transaction.date)}</span>
+                                    <span>{dateFormatter.format(transaction.date)}</span>
 
                                     <span>{transaction.description}</span>
-                                    <span className={`badge badge-primary px-1 text-sm text-base-100 
-                                    ${transaction.isWithdrawal === 0 ? 'badge-secondary' : transaction.isWithdrawal === 1 ? 'badge-primary' : 'badge-success'}`}>
-                                        {transaction.isWithdrawal === 0 ? '송금' : transaction.isWithdrawal === 1 ? '입금' : '충전'}
+                                    <span className="badge badge-primary px-1 text-sm text-base-100">
+                                        {transaction.isWithdrawal ? '지출' : '입금'}
                                     </span>
                                 </div>
                                 <div>
-                                    <span className="text-sm">{Boolean(transaction.isWithdrawal) ? '+' : '-'}</span>
+                                    <span className="text-sm">{transaction.isWithdrawal ? '-' : '+'}</span>
                                     <span className="text-sm">{transaction.amount.toLocaleString()}원</span>
                                 </div>
 
@@ -182,11 +194,12 @@ const TransferList = (): JSX.Element => {
                         </div>
                     ))
                 ) : (
-                    <div className="text-sm text-center text-primary">거래내역이 없습니다.</div>
+                    <div className="text-sm text-center text-primary">이번 달 거래내역이 없습니다.</div>
                 )}
 
 
             </div>
+            {/* <Paging page={currentPage} count={Math.ceil(count / postPerPage)} setPage={handlePageChange} /> */}
             <div>
                 <Pagination
                     activePage={currentPage}

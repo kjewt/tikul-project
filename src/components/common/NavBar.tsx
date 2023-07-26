@@ -10,13 +10,11 @@ const NavBar = () => {
     const storedUser = sessionStorage.getItem('user');
     const user = storedUser ? JSON.parse(storedUser) : null;
     const navigate = useNavigate()
-    console.log(accountData)
     useEffect(() => {
         // 페이지 로드 시에 스토리지에서 사용자 정보 가져오기
         const storedUser = localStorage.getItem('account');
         if (storedUser) {
             const user = JSON.parse(storedUser);
-            console.log(user.userData)
             setAccountData(user)
         }
         console.log('nav useEffect 실행됨!');
@@ -28,7 +26,6 @@ const NavBar = () => {
         setAccountData(null); // 계좌 데이터 초기값으로 설정
         setTransactions([])
 
-        // 로그아웃 로직 추가 (예를 들어, 세션 스토리지 삭제)
         localStorage.removeItem('user');
         navigate('/login')
     };

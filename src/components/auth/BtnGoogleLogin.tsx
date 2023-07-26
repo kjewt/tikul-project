@@ -5,7 +5,7 @@ import { emailState, passwordState, accountDataState } from '../../state/atoms';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { firebaseAuth, db } from '../../../firebase';
 
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection } from 'firebase/firestore';
 
 const BtnGoogleLogin = (): JSX.Element => {
     const navigate = useNavigate();
@@ -38,6 +38,7 @@ const BtnGoogleLogin = (): JSX.Element => {
                     navigate('/add');
                 } else {
                     // bankName이 있는 경우, Home 페이지로 이동
+
                     navigate('/Home');
                 }
 
@@ -46,7 +47,9 @@ const BtnGoogleLogin = (): JSX.Element => {
                 console.log('사용자 이름:', user.displayName);
 
                 // 구글 로그인의 결과로 받아온 사용자 정보를 세션 스토리지에 저장
-                localStorage.setItem('account', JSON.stringify(data));
+                localStorage.setItem('account', JSON.stringify(accountData));
+                localStorage.setItem('uid', JSON.stringify(user.uid));
+
             } else {
                 alert('로그인에 실패했습니다.'); // 로그인이 실패한 경우 처리
             }

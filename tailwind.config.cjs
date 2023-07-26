@@ -36,12 +36,12 @@ module.exports = {
       {
         mytheme: {
           primary: "#8FD7D9",
-          secondary: "#cffafe",
+          secondary: "#CFA5BF",
           accent: "#d1d5db",
           neutral: "#98999B",
           "base-100": "#ffffff",
           info: "#6b7280",
-          success: "#36d399",
+          success: "#F3C7CC",
           warning: "#fbbd23",
           error: "#f87272",
         },

@@ -14,46 +14,90 @@ const AddMoneyInput = (): JSX.Element => {
     const [accountNumber, setAccountNumber] = useState('');
     const [accountData, setAccountData] = useRecoilState(accountDataState)
     const [transferAmount, setTransferAmount] = useState('');
+    const [description, setDescription] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
     const [transactions, setTransactions] = useRecoilState(transactionsState);
     const [isBanking, setIsBanking] = useRecoilState(isBankingState);
     const [isComplete, setIsComplete] = useState(false)
+    const [password, setPassword] = useState('');
 
     const handleAddMoney = async () => {
         try {
+            // 입력된 은행 이름과 계좌번호로 유저 검색
+            const usersRef = collection(db, 'users');
+            const q = query(usersRef, where('bankName', '==', transferBankName), where('account', '==', accountNumber));
+            const querySnapshot = await getDocs(q);
 
-            // 송금하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
-            const user = firebaseAuth.currentUser;
-            const currentUserDocRef = doc(db, 'users', user.uid);
+            // 입력한 은행 이름과 계좌번호와 일치하는 유저가 찾아지면
+            if (!querySnapshot.empty) {
 
-            // 문서 데이터 가져오기
-            const currentUserDocSnap = await getDoc(currentUserDocRef);
-            const currentUserData = currentUserDocSnap.data();
 
-            const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
-            const addTransaction = {
-                amount: transferAmount,
-                description: "",
-                isWithdrawal: false,
-                category: "송금",
-                date: new Date(),
+
+                // 충전하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
+                const user = firebaseAuth.currentUser;
+                const currentUserDocRef = doc(db, 'users', user.uid);
+
+                // 문서 데이터 가져오기
+                const currentUserDocSnap = await getDoc(currentUserDocRef);
+                const currentUserData = currentUserDocSnap.data();
+
+                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                const addTransaction = {
+                    amount: transferAmount,
+                    description: description,
+                    isWithdrawal: 2, //2는 충전
+                    category: "충전",
+                    date: new Date(),
+                }
+                await addDoc(currentUserDetailsRef, addTransaction);
+                setTransactions((prevDetails) => [...prevDetails, addTransaction]);
+
+                await updateDoc(currentUserDocRef, {
+                    balance: currentUserData.balance + Number(transferAmount),
+                });
+                // const userDoc = querySnapshot.docs[0].ref;
+                const userDoc = querySnapshot.docs[0];
+                const userRef = doc(db, 'users', userDoc.id);
+
+                if (userDoc.data().balance > Number(transferAmount)) {
+                    const detailsRef = collection(db, 'users', userDoc.id, 'details');
+                    await addDoc(detailsRef, {
+                        amount: transferAmount,
+                        description: description,
+                        isWithdrawal: 0, //1는 송금 
+                        category: "송금",
+                        date: new Date(),
+                    });
+                    await updateDoc(userRef, {
+                        balance: userDoc.data().balance - Number(transferAmount),
+                    });
+
+                    setAccountNumber('');
+                    setTransferAmount('');
+                    setPassword('');
+                    setIsComplete(true);
+                    setDescription('')
+                    console.log('송금 성공! 유저에게 내역이 추가되었습니다.');
+                } else {
+                    alert('충전할 계좌의 잔액이 부족합니다!')
+                }
+
+                // 충전 당하는 유저의 "details" 컬렉션에 송금 내역 추가
+
+
+
+
+
+                // 송금 성공 후 입력 필드 초기화
+
+
+            } else {
+                console.log('입력한 은행 이름과 계좌번호와 일치하는 유저를 찾을 수 없습니다.');
             }
-            await addDoc(currentUserDetailsRef, addTransaction);
-            setTransactions((prevDetails) => [...prevDetails, addTransaction]);
-
-            await updateDoc(currentUserDocRef, {
-                balance: currentUserData.balance + Number(transferAmount),
-            });
-
-            setIsComplete(true)
-            console.log('충전완료')
-
-
         } catch (error) {
-            console.log('충전 실패', error)
+            console.log('송금 실패:', error);
         }
-    }
-
+    };
 
     const handelToHome = () => {
         setIsComplete(false);
@@ -98,6 +142,18 @@ const AddMoneyInput = (): JSX.Element => {
                         />
 
 
+                    </div>
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text">메모를 남겨주세요!</span>
+                        </label>
+                        <input
+                            type="text"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="(option)"
+                            className="input input-bordered w-full input-primary"
+                        />
                     </div>
                     <div className="form-control">
                         <label className="label">

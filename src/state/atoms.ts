@@ -25,11 +25,6 @@ export const passwordState = atom<string>({
   default: "", // default value (aka initial value)
 });
 
-// export const isSignupState = atom({
-//   key: "isSignupState", // unique ID (with respect to other atoms/selectors)
-//   default: "", // default value (aka initial value)
-// });
-
 export const bankNameState = atom({
   key: "bankNameState", // unique ID (with respect to other atoms/selectors)
   default: "", // default value (aka initial value)
@@ -97,4 +92,22 @@ export const balanceState = atom({
 export const transferBankNameState = atom({
   key: "transferBankNameState",
   default: "",
+});
+
+//for filter
+
+export const filteredTransactionsState = atom<any[]>({
+  key: "filteredTransactionsState",
+  default: [],
+});
+
+const today = new Date();
+export const filterMonthSate = atom({
+  key: "filterMonthSate",
+  default: today.getMonth() + 1,
+});
+
+export const filterYearSate = atom({
+  key: "filterYearSate",
+  default: today.getFullYear(),
 });
