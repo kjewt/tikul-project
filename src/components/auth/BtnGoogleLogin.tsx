@@ -5,13 +5,11 @@ import { emailState, passwordState, accountDataState } from '../../state/atoms';
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { firebaseAuth, db } from '../../../firebase';
 
-import { doc, setDoc, getDoc, getFirestore } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const BtnGoogleLogin = (): JSX.Element => {
     const navigate = useNavigate();
 
-    const [email, setEmail] = useRecoilState(emailState);
-    const [password, setPassword] = useRecoilState(passwordState);
     const [accountData, setAccountData] = useRecoilState(accountDataState)
 
     const provider = new GoogleAuthProvider();
@@ -42,23 +40,22 @@ const BtnGoogleLogin = (): JSX.Element => {
                     // bankName이 있는 경우, Home 페이지로 이동
                     navigate('/Home');
                 }
+
+                console.log('로그인 성공!');
+                console.log('사용자 이메일:', user.email);
+                console.log('사용자 이름:', user.displayName);
+
+                // 구글 로그인의 결과로 받아온 사용자 정보를 세션 스토리지에 저장
+                localStorage.setItem('account', JSON.stringify(data));
+            } else {
+                alert('로그인에 실패했습니다.'); // 로그인이 실패한 경우 처리
             }
-
-            setEmail(user.email);
-            console.log('로그인 성공!');
-            console.log('사용자 이메일:', user.email);
-            console.log('사용자 이름:', user.displayName);
-
-            // 구글 로그인의 결과로 받아온 사용자 정보를 세션 스토리지에 저장
-            sessionStorage.setItem('user', JSON.stringify({
-                email: user.email,
-                displayName: user.displayName,
-                user: user.uid
-            }));
         } catch (error) {
-            alert('로그인에 실패했습니다.', error);
+            alert('로그인에 실패했습니다.')
+            console.error('로그인 오류:', error);;
         }
     };
+
 
     return (
         <>

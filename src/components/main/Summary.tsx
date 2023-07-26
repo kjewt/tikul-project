@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 const Summary = (): JSX.Element => {
     const today = new Date;
     const month = today.getMonth() + 1
@@ -10,12 +11,15 @@ const Summary = (): JSX.Element => {
                     <div className="text-center">
                         <p className="py-3">{month}월 사용 내역</p>
                     </div>
+
                     <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                         <div className="card-body text-md">
                             <div className="category">
                                 <div className="edit flex gap-2 justify-end">
-                                    <button><i className='bx bxs-edit-alt text-xl text-primary'></i></button>
-                                    <button><i className='bx bx-list-plus text-2xl text-primary'></i></button>
+                                    <Link to="/detail">
+                                        <button className="link link-primary pb-2 ">자세히보기</button>
+                                    </Link>
+
                                 </div>
                                 <div className="category-content flex justify-between p-4">
                                     <span>카테고리 1</span>

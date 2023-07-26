@@ -4,11 +4,12 @@ import { useRecoilState } from 'recoil';
 import {
     emailState,
     passwordState,
+    accountDataState
 } from '../../state/atoms';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { firebaseAuth } from '../../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { firebaseAuth, db } from '../../../firebase';
 import Modal from '../common/Modal';
-import Cookies from 'js-cookie';
 
 const BtnLogin = (): JSX.Element => {
     const navigate = useNavigate();
@@ -16,7 +17,10 @@ const BtnLogin = (): JSX.Element => {
     const [email, setEmail] = useRecoilState(emailState);
     const [password, setPassword] = useRecoilState(passwordState);
     const [isLogin, setIsLogin] = useState(true);
-    const user = firebaseAuth.currentUser
+    const [accountData, setAccountData] = useRecoilState(accountDataState);
+    const user = firebaseAuth.currentUser;
+    const userRef = user ? doc(db, "users", user.uid) : null; // 예외 처리
+
 
 
     const Login = async () => {
@@ -25,8 +29,10 @@ const BtnLogin = (): JSX.Element => {
             console.log('로그인 성공!');
             setIsLogin(true);
 
-            // 쿠키에 사용자 정보 저장
-            Cookies.set('user', { email });
+            const accountDoc = await getDoc(userRef);
+            const data = accountDoc.data();
+            setAccountData(data);
+
 
             navigate('/Home'); // 회원가입 성공 후 로그인 페이지로 이동
         } catch (error) {
@@ -34,16 +40,18 @@ const BtnLogin = (): JSX.Element => {
             setIsLogin(false);
         }
     };
+
+
+
+    if (accountData) {
+        localStorage.setItem('account', JSON.stringify(accountData));
+        console.log(accountData)
+        console.log('저장성공!')
+    }
+    console.log('btnLogin useEffect 실행됨!');
+
     console.log(isLogin);
-    useEffect(() => {
-        if (email) {
-            sessionStorage.setItem('user', JSON.stringify({
-                email: user.email,
-                user: user.uid
-            }));
-        }
-        console.log('btnLogin useEffect 실행됨!');
-    }, []);
+
 
 
     return (

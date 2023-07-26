@@ -54,7 +54,7 @@ const TransferInput = (): JSX.Element => {
                 await updateDoc(currentUserDocRef, {
                     balance: currentUserData.balance - Number(transferAmount),
                 });
-
+                // const userDoc = querySnapshot.docs[0].ref;
                 const userDoc = querySnapshot.docs[0];
                 const userRef = doc(db, 'users', userDoc.id);
 

@@ -8,6 +8,9 @@ import AddAcount from './views/AddAcount'
 import ScrollToTop from './components/common/ScrollToTop';
 import TransferComplete from './components/main/TransferComplete';
 import Keypad from './components/common/KeyPad';
+import Editing from './views/Editing';
+import TransactionDetail from './views/TransactionDetail';
+import Footer from './components/common/footer';
 
 const App = (): JSX.Element => {
   return (
@@ -21,9 +24,12 @@ const App = (): JSX.Element => {
           <Route path="/add" element={<AddAcount />} />
           <Route path="/complete" element={<TransferComplete />} />
           <Route path="/keypad" element={<Keypad />} />
+          <Route path="/editing" element={<Editing />} />
+          <Route path="/detail" element={<TransactionDetail />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </section>
+      <Footer />
     </BrowserRouter>
   );
 };

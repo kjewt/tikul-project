@@ -15,20 +15,20 @@ export const transactionsState = atom<any[]>({
   default: [],
 });
 
-export const emailState = atom({
+export const emailState = atom<string>({
   key: "emailState", // unique ID (with respect to other atoms/selectors)
   default: "", // default value (aka initial value)
 });
 
-export const passwordState = atom({
+export const passwordState = atom<string>({
   key: "passwordState", // unique ID (with respect to other atoms/selectors)
   default: "", // default value (aka initial value)
 });
 
-export const isSignupState = atom({
-  key: "isSignupState", // unique ID (with respect to other atoms/selectors)
-  default: "", // default value (aka initial value)
-});
+// export const isSignupState = atom({
+//   key: "isSignupState", // unique ID (with respect to other atoms/selectors)
+//   default: "", // default value (aka initial value)
+// });
 
 export const bankNameState = atom({
   key: "bankNameState", // unique ID (with respect to other atoms/selectors)

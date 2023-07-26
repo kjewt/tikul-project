@@ -3,13 +3,15 @@ import { doc, getDoc, addDoc, updateDoc, collection, getDocs } from 'firebase/fi
 import { firebaseAuth, db } from '../../../firebase';
 import { useRecoilState } from 'recoil';
 import { selectedDateState, transactionsState } from '../../state/atoms';
+import axios from "axios";
 
 import 'react-day-picker/dist/style.css';
 import DatePicker from '../common/DatePicker';
+import Paging from '../common/Paging';
 
 const TransferList = (): JSX.Element => {
     const user = firebaseAuth.currentUser;
-    const userRef = doc(db, 'users', user?.uid || '');
+    const userRef = user ? doc(db, "users", user.uid) : null;
     const dateFormatter = new Intl.DateTimeFormat('en', { month: '2-digit', day: '2-digit' });
 
     const [description, setDescription] = useState<string>('');
@@ -17,7 +19,22 @@ const TransferList = (): JSX.Element => {
     const [showAddContent, setShowAddContent] = useState<boolean>(false);
     const [isWithdrawal, setIsWithdrawal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useRecoilState(selectedDateState);
+
     const [transactions, setTransactions] = useRecoilState(transactionsState);
+    const [count, setCount] = useState(0); // 아이템 총 개수
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지를 1로 설정
+    const [postPerPage] = useState(10); // 한 페이지에 보여질 아이템 수 
+
+    const [indexOfLastPost, setIndexOfLastPost] = React.useState(0);
+    const [indexOfFirstPost, setIndexOfFirstPost] = React.useState(0);
+    interface Transaction {
+        date: Date;
+        description: string;
+        amount: number;
+        category: string;
+        isWithdrawal: boolean;
+    }
+    const [currentTransactions, setCurrentTransactions] = useState<Transaction[]>([]);
 
     const fetchTransactions = async () => {
         try {
@@ -32,16 +49,15 @@ const TransferList = (): JSX.Element => {
             });
 
             setTransactions(transactionsArray);
+            setCount(transactionsArray.length); // 거래 내역 개수를 설정
         } catch (error) {
             console.log('거래내역 불러오기 실패', error);
         }
     };
+
     useEffect(() => {
-
         fetchTransactions();
-
     }, []);
-
 
     const toggleWithdrawal = () => {
         setIsWithdrawal((prev) => !prev);
@@ -78,6 +94,7 @@ const TransferList = (): JSX.Element => {
                 // 새로운 거래 내역을 Firestore에 추가합니다.
                 await addDoc(detailsCollectionRef, newTransaction);
                 setTransactions((prevDetails) => [...prevDetails, newTransaction]);
+                setCount((prevCount) => prevCount + 1); // 거래 내역 개수 업데이트
 
                 // 업데이트할 balance 값
                 const updatedBalance = isWithdrawal ? balance - amount : balance + amount;
@@ -92,6 +109,16 @@ const TransferList = (): JSX.Element => {
         } catch (error) {
             console.log('거래내역 추가 실패', error);
         }
+    };
+    React.useEffect(() => {
+        setIndexOfLastPost(currentPage * postPerPage);
+        setIndexOfFirstPost(indexOfLastPost - postPerPage);
+        setCurrentTransactions(transactions.slice(indexOfFirstPost, indexOfLastPost)); // currentPosts를 currentTransactions로 수정
+    }, [currentPage, indexOfFirstPost, indexOfLastPost, transactions, postPerPage]);
+
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
     };
 
 
@@ -151,8 +178,8 @@ const TransferList = (): JSX.Element => {
                 )}
 
 
-                {Array.isArray(transactions) && transactions.length > 0 ? (
-                    transactions.map((transaction, index: number) => (
+                {Array.isArray(currentTransactions) && currentTransactions.length > 0 ? (
+                    currentTransactions.map((transaction, index: number) => (
                         <div key={index}>
                             <div className="transaction flex justify-between text-info">
                                 <div className="transaction-info text-sm flex gap-2">
@@ -178,6 +205,7 @@ const TransferList = (): JSX.Element => {
 
 
             </div>
+            <Paging page={currentPage} count={Math.ceil(count / postPerPage)} setPage={handlePageChange} />
         </>
     );
 };
