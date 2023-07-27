@@ -28,12 +28,12 @@ ul.pagination li a {
 }
 ul.pagination li.active a {
   font-weight: 800;
+  color: #8fd7d9;
 }
 ul.pagination li.active {
   font-weight: 800;
 }
-ul.pagination li a:hover,
-ul.pagination li a.active {
+ul.pagination li a:hover {
   color: #8fd7d9;
 }
 .page-selection {

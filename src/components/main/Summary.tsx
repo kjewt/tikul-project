@@ -56,9 +56,12 @@ const Summary = (): JSX.Element => {
         setThisYear(thisYear);
     };
 
+
+
     useEffect(() => {
         calculateTotals();
-    }, [isCorrectAccountPassword]);
+        console.log('언제실행됨?')
+    });
 
     return (
         <>

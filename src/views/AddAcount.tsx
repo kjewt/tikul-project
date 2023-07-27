@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { emailState } from '../state/atoms';
+import { accountDataState } from '../state/atoms';
 
 import DropDown from '../components/common/Dropdown';
 import Account from '../components/auth/Account';
@@ -8,13 +8,13 @@ import AccountPasswordCheck from '../components/auth/AccountPasswordCheck'
 import BtnAddAcount from '../components/main/BtnAddAccount';
 
 const Join = (): JSX.Element => {
-    const [email, setEmail] = useRecoilState(emailState);
+    const [accountData, setAccountData] = useRecoilState(accountDataState);
     return (
         <>
             <div className="container min-h-screen">
                 <div className="flex flex-col items-center">
                     <span>이메일</span>
-                    <span>{email}</span>
+                    <span>{accountData.email}</span>
                     <div className="text-center">
                         <Link to="/home">
                             <h1 className="text-5xl font-bold">Tikul</h1>

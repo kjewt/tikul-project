@@ -4,13 +4,6 @@ import { useRecoilState } from 'recoil';
 import { filterMonthSate, filterYearSate } from '../state/atoms'
 import NavBar from '../components/common/NavBar';
 import TransferList from '../components/main/TransferList';
-// import { useRecoilState } from 'recoil';
-// import { isBankingState } from '../state/atoms';
-// import NavBar from '../components/common/NavBar';
-// import Banking from '../components/main/Banking';
-// import Transfer from '../components/main/Transfer';
-// import Summary from '../components/main/Summary';
-// import AddMoney from '../components/main/AddMoney';
 
 const TransactionDetail = (): JSX.Element => {
 

@@ -22,26 +22,6 @@ const Filtering = (): JSX.Element => {
     // const [user, setUser] = useState(null); // 유저 상태를 추가합니다.
     const user = firebaseAuth.currentUser;
     const [userRef, setUserRef] = useState(user ? doc(db, "users", user.uid) : null);
-
-    useEffect(() => {
-        const filterTransactionsByYearAndMonth = () => {
-            // 현재 선택한 년도와 달에 해당하는 거래 목록만 필터링하여 저장
-            const filteredData = transactions.filter((transaction) => {
-                const transactionDate = new Date(transaction.date);
-                return (
-                    transactionDate.getFullYear() === thisYear &&
-                    transactionDate.getMonth() === thisMonth - 1 // getMonth()는 0부터 시작하므로 -1 처리
-                );
-            });
-
-            // 최신 업데이트 순으로 정렬하여 filteredTransactions에 저장
-            const sortedTransactions = [...filteredData].sort((a, b) => b.date - a.date);
-            setFilteredTransactions(sortedTransactions);
-        };
-
-        // thisYear와 thisMonth가 변경될 때마다 필터링 함수를 호출합니다.
-        filterTransactionsByYearAndMonth();
-    }, [thisYear, thisMonth, transactions]);
     useEffect(() => {
         const storedUser = localStorage.getItem('account');
         // const uid = localStorage.getItem('uid')
@@ -50,10 +30,6 @@ const Filtering = (): JSX.Element => {
             setAccountData(user);
             console.log('로컬 스토리지 저장 useEffect 실행됨!');
         }
-        // if (uid) {
-        //     const UID = JSON.parse(uid);
-        //     setUser(UID)
-        // }
     }, []);
 
     useEffect(() => {
@@ -90,6 +66,27 @@ const Filtering = (): JSX.Element => {
         console.log('거래내역 저장 데이터 불러오기 useEffect 실행됨!');
     }, [userRef]);
 
+    useEffect(() => {
+        const filterTransactionsByYearAndMonth = () => {
+            // 현재 선택한 년도와 달에 해당하는 거래 목록만 필터링하여 저장
+            const filteredData = transactions.filter((transaction) => {
+                const transactionDate = new Date(transaction.date);
+                return (
+                    transactionDate.getFullYear() === thisYear &&
+                    transactionDate.getMonth() === thisMonth - 1 // getMonth()는 0부터 시작하므로 -1 처리
+                );
+            });
+
+            // 최신 업데이트 순으로 정렬하여 filteredTransactions에 저장
+            const sortedTransactions = [...filteredData].sort((a, b) => b.date - a.date);
+            setFilteredTransactions(sortedTransactions);
+        };
+
+        // thisYear와 thisMonth가 변경될 때마다 필터링 함수를 호출합니다.
+        filterTransactionsByYearAndMonth();
+    }, [thisYear, thisMonth, transactions]);
+
+
     const sortTransactionsByLatest = () => {
         const sortedTransactions = [...transactions].sort((a, b) => b.date - a.date);
         setFilteredTransactions(sortedTransactions);
@@ -101,7 +98,8 @@ const Filtering = (): JSX.Element => {
         setFilteredTransactions(transactions);
         sortTransactionsByLatest()
     };
-
+    console.log(transactions)
+    console.log(filteredTransactions)
     const filterThisMonth = () => {
         setFilterClicked(2);
 
@@ -137,7 +135,7 @@ const Filtering = (): JSX.Element => {
         setFilterClicked(4);
 
         const filteredData = transactions.filter((transaction) => {
-            return transaction.category === '송금';
+            return transaction.isWithdrawal === 0;
         });
 
         setFilteredTransactions(filteredData);
@@ -149,7 +147,7 @@ const Filtering = (): JSX.Element => {
         setFilterClicked(5);
 
         const filteredData = transactions.filter((transaction) => {
-            return transaction.category === '입금';
+            return transaction.isWithdrawal === 1;
         });
 
         setFilteredTransactions(filteredData);
@@ -161,7 +159,7 @@ const Filtering = (): JSX.Element => {
         setFilterClicked(6);
 
         const filteredData = transactions.filter((transaction) => {
-            return transaction.category === '충전';
+            return transaction.isWithdrawal === 2;
         });
 
         setFilteredTransactions(filteredData);
@@ -220,5 +218,6 @@ const Filtering = (): JSX.Element => {
         </>
     );
 };
+
 
 export default Filtering;

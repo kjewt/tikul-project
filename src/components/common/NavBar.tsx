@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { useRecoilState } from 'recoil';
-import { accountDataState, transactionsState } from '../../state/atoms';
+import { accountState, accountDataState, transactionsState } from '../../state/atoms';
 
 const NavBar = () => {
     const [accountData, setAccountData] = useRecoilState(accountDataState);
+    const [account, setAccount] = useRecoilState(accountState);
     const [transactions, setTransactions] = useRecoilState(transactionsState);
 
     const storedUser = sessionStorage.getItem('user');
@@ -25,6 +26,7 @@ const NavBar = () => {
         // 여기서 emailState, bankNameState, accountDataState, accountState를 초기값으로 돌립니다.
         setAccountData(null); // 계좌 데이터 초기값으로 설정
         setTransactions([])
+        setAccount('')
 
         localStorage.removeItem('user');
         navigate('/login')

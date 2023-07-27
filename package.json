@@ -1,5 +1,5 @@
 {
-  "name": "react-shop",
+  "name": "tikul",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -32,15 +32,12 @@
     "@firebase/firestore": "^2.3.7",
     "@popperjs/core": "^2.11.8",
     "@vercel/node": "^2.14.3",
-    "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "firebase": "10.1.0",
     "firebase-tools": "^12.4.6",
     "firebaseui": "^5.0.0",
     "focus-trap-react": "^10.2.1",
     "i": "^0.3.7",
-    "js-cookie": "^3.0.5",
-    "react-day-picker": "^8.8.0",
     "react-js-pagination": "^3.0.2",
     "react-popper": "^2.3.0"
   }
