@@ -84,14 +84,14 @@ const Banking = (): JSX.Element => {
                                 <span className="p-1">{bankName}</span>
                                 <span className="p-1">{accountData.account}</span>
                             </div>
-                            <div className="account-balance px-4 text-right text-xl">{balance}원</div>
+                            <div className="account-balance px-4 text-right text-xl">{balance.toLocaleString()}원</div>
                             <div className="btn-banking p-4 flex justify-around gap-1">
                                 <button onClick={handleTransferBtn} className="btn btn-primary text-base-100 w-1/2">송금</button>
                                 <button onClick={handleAddMoneyBtn} className="btn btn-outline btn-primary w-1/2 btn-hover">충전</button>
                             </div>
                         </div>
                         {/* 거래내역 */}
-                        <TransferList />
+                        <TransferList detail={false} />
                     </div>
                 )}
             </div>

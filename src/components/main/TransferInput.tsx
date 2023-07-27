@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'
 import { doc, collection, query, where, getDocs, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 import { db, firebaseAuth } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { transferBankNameState, isBankingState, balanceState, transactionsState, accountDataState } from '../../state/atoms';
+import { transferBankNameState, isBankingState, isCorrectAccountPasswordState, transactionsState, accountDataState } from '../../state/atoms';
 import DropDown from '../common/Dropdown';
 import Keypad from '../common/KeyPad';
 
@@ -16,9 +16,15 @@ const TransferInput = (): JSX.Element => {
     const [password, setPassword] = useState('');
     const [description, setDescription] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
+    const [isCorrectAccountPassword, setIsCorrectAccountPassword] = useRecoilState(isCorrectAccountPasswordState);
     const [transactions, setTransactions] = useRecoilState(transactionsState);
     const [isBanking, setIsBanking] = useRecoilState(isBankingState);
     const [isComplete, setIsComplete] = useState(false)
+
+
+    useEffect(() => {
+        setIsCorrectAccountPassword(false)
+    }, [])
 
     const handleTransfer = async () => {
         try {
@@ -45,7 +51,7 @@ const TransferInput = (): JSX.Element => {
                     amount: transferAmount,
                     description: description,
                     isWithdrawal: 0, // 0은 송금
-                    category: "송금",
+                    category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
                     date: new Date(),
                 }
                 await addDoc(currentUserDetailsRef, addTransaction);
@@ -64,16 +70,12 @@ const TransferInput = (): JSX.Element => {
                     amount: transferAmount,
                     description: description,
                     isWithdrawal: 1, //1는 입금 
-                    category: "입금",
+                    category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
                     date: new Date(),
                 });
                 await updateDoc(userRef, {
                     balance: userDoc.data().balance + Number(transferAmount),
                 });
-
-
-
-
 
                 // 송금 성공 후 입력 필드 초기화
                 setAccountNumber('');
@@ -90,13 +92,12 @@ const TransferInput = (): JSX.Element => {
         }
     };
 
-
+    console.log(`${isCorrectAccountPassword}:비밀번호`)
 
     const handelToHome = () => {
         setIsComplete(false);
         setIsBanking(0)
     }
-
 
     return (
         <>
@@ -136,7 +137,7 @@ const TransferInput = (): JSX.Element => {
 
                         {Number(transferAmount) > accountData.balance && (
                             <span className="password-error text-sm text-error ml-1 mt-1">
-                                출금계좌 잔고 부족. 현재 잔고는 {accountData.balance}원 입니다.
+                                출금계좌 잔고 부족. 현재 잔고는 {accountData.balance.toLocaleString()}원 입니다.
                             </span>
                         )}
                     </div>
@@ -159,8 +160,24 @@ const TransferInput = (): JSX.Element => {
                         <Keypad />
                     </div>
                     <div className="form-control my-6">
-                        <button className={`btn btn-primary w-full text-base-100 ${Number(transferAmount) > accountData.balance ? "btn-disabled" : ""}`} onClick={handleTransfer}>
-                            송금
+                        <button
+                            className={`btn btn-primary w-full text-base-100 ${!transferBankName ||
+                                !accountNumber ||
+                                !transferAmount ||
+                                !isCorrectAccountPassword ||
+                                Number(transferAmount) > accountData.balance
+                                ? "btn-disabled"
+                                : ""
+                                }`}
+                            onClick={handleTransfer}
+                            disabled={
+                                !transferBankName ||
+                                !accountNumber ||
+                                !transferAmount ||
+                                !isCorrectAccountPassword ||
+                                Number(transferAmount) > accountData.balance
+                            }
+                        >  송금
                         </button>
                     </div>
                 </div>)

@@ -57,7 +57,7 @@ const Password = (): JSX.Element => {
                 <input
                     type="password"
                     placeholder="비밀번호 입력"
-                    className={`password input input-bordered ${!isValidPassword && isTyping && 'input-error'
+                    className={`password input input-bordered input-primary ${!isValidPassword && isTyping && 'input-error'
                         }`}
                     value={password}
                     onChange={handlePasswordChange}

@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom'
 import { doc, collection, query, where, getDocs, getDoc, addDoc, updateDoc } from 'firebase/firestore';
 import { db, firebaseAuth } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { transferBankNameState, isBankingState, balanceState, transactionsState, accountDataState } from '../../state/atoms';
+import { transferBankNameState, isBankingState, isCorrectAccountPasswordState, transactionsState, accountDataState } from '../../state/atoms';
 import DropDown from '../common/Dropdown';
 import Keypad from '../common/KeyPad';
-
 
 const AddMoneyInput = (): JSX.Element => {
     // const navigate = useNavigate()
@@ -16,10 +15,15 @@ const AddMoneyInput = (): JSX.Element => {
     const [transferAmount, setTransferAmount] = useState('');
     const [description, setDescription] = useState('');
     const [transferBankName, setTransferBankName] = useRecoilState(transferBankNameState);
+    const [isCorrectAccountPassword, setIsCorrectAccountPassword] = useRecoilState(isCorrectAccountPasswordState);
     const [transactions, setTransactions] = useRecoilState(transactionsState);
     const [isBanking, setIsBanking] = useRecoilState(isBankingState);
     const [isComplete, setIsComplete] = useState(false)
     const [password, setPassword] = useState('');
+
+    useEffect(() => {
+        setIsCorrectAccountPassword(false)
+    }, [])
 
     const handleAddMoney = async () => {
         try {
@@ -31,8 +35,6 @@ const AddMoneyInput = (): JSX.Element => {
             // 입력한 은행 이름과 계좌번호와 일치하는 유저가 찾아지면
             if (!querySnapshot.empty) {
 
-
-
                 // 충전하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
                 const user = firebaseAuth.currentUser;
                 const currentUserDocRef = doc(db, 'users', user.uid);
@@ -41,35 +43,49 @@ const AddMoneyInput = (): JSX.Element => {
                 const currentUserDocSnap = await getDoc(currentUserDocRef);
                 const currentUserData = currentUserDocSnap.data();
 
-                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
-                const addTransaction = {
-                    amount: transferAmount,
-                    description: description,
-                    isWithdrawal: 2, //2는 충전
-                    category: "충전",
-                    date: new Date(),
-                }
-                await addDoc(currentUserDetailsRef, addTransaction);
-                setTransactions((prevDetails) => [...prevDetails, addTransaction]);
+                // const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                // const addTransaction = {
+                //     amount: transferAmount,
+                //     description: description,
+                //     isWithdrawal: 2, //2는 충전
+                //     category: ` 충전 계좌: ${accountData.bankName} ${accountData.account}`,
+                //     date: new Date(),
+                // }
+                // await addDoc(currentUserDetailsRef, addTransaction);
+                // setTransactions((prevDetails) => [...prevDetails, addTransaction]);
 
-                await updateDoc(currentUserDocRef, {
-                    balance: currentUserData.balance + Number(transferAmount),
-                });
-                // const userDoc = querySnapshot.docs[0].ref;
+                // await updateDoc(currentUserDocRef, {
+                //     balance: currentUserData.balance + Number(transferAmount),
+                // });
                 const userDoc = querySnapshot.docs[0];
                 const userRef = doc(db, 'users', userDoc.id);
 
-                if (userDoc.data().balance > Number(transferAmount)) {
+                if (userDoc.data().balance >= Number(transferAmount)) {
                     const detailsRef = collection(db, 'users', userDoc.id, 'details');
                     await addDoc(detailsRef, {
                         amount: transferAmount,
                         description: description,
                         isWithdrawal: 0, //1는 송금 
-                        category: "송금",
+                        category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
                         date: new Date(),
                     });
                     await updateDoc(userRef, {
                         balance: userDoc.data().balance - Number(transferAmount),
+                    });
+
+                    const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                    const addTransaction = {
+                        amount: transferAmount,
+                        description: description,
+                        isWithdrawal: 2, //2는 충전
+                        category: ` 충전 계좌: ${accountData.bankName} ${accountData.account}`,
+                        date: new Date(),
+                    }
+                    await addDoc(currentUserDetailsRef, addTransaction);
+                    setTransactions((prevDetails) => [...prevDetails, addTransaction]);
+
+                    await updateDoc(currentUserDocRef, {
+                        balance: currentUserData.balance + Number(transferAmount),
                     });
 
                     setAccountNumber('');
@@ -81,16 +97,6 @@ const AddMoneyInput = (): JSX.Element => {
                 } else {
                     alert('충전할 계좌의 잔액이 부족합니다!')
                 }
-
-                // 충전 당하는 유저의 "details" 컬렉션에 송금 내역 추가
-
-
-
-
-
-                // 송금 성공 후 입력 필드 초기화
-
-
             } else {
                 console.log('입력한 은행 이름과 계좌번호와 일치하는 유저를 찾을 수 없습니다.');
             }
@@ -103,7 +109,6 @@ const AddMoneyInput = (): JSX.Element => {
         setIsComplete(false);
         setIsBanking(0)
     }
-
 
     return (
         <>
@@ -140,8 +145,6 @@ const AddMoneyInput = (): JSX.Element => {
                             placeholder=""
                             className="input input-primary w-full input-bordered"
                         />
-
-
                     </div>
                     <div className="form-control">
                         <label className="label">
@@ -162,8 +165,22 @@ const AddMoneyInput = (): JSX.Element => {
                         <Keypad />
                     </div>
                     <div className="form-control my-6">
-                        <button className="btn btn-primary w-full text-base-100" onClick={handleAddMoney}>
-                            충전!
+                        <button
+                            className={`btn btn-primary w-full text-base-100 ${!transferBankName ||
+                                !accountNumber ||
+                                !transferAmount ||
+                                !isCorrectAccountPassword
+                                ? "btn-disabled"
+                                : ""
+                                }`}
+                            onClick={handleAddMoney}
+                            disabled={
+                                !transferBankName ||
+                                !accountNumber ||
+                                !transferAmount ||
+                                !isCorrectAccountPassword
+                            }
+                        >  충전
                         </button>
                     </div>
                 </div>)

@@ -53,7 +53,7 @@ const PasswordCheck = (): JSX.Element => {
                 <input
                     type="password"
                     placeholder="숫자 6자리로 입력해주세요."
-                    className="input input-bordered"
+                    className="input input-bordered input-primary"
                     value={prePassword}
                     onChange={handlePrePasswordChange}
                 />
@@ -69,7 +69,7 @@ const PasswordCheck = (): JSX.Element => {
                 <input
                     type="password"
                     placeholder="계좌 비밀번호 확인"
-                    className={`password input input-bordered ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
+                    className={`password input input-bordered input-primary ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
                     value={password}
                     onChange={handleAccountPasswordChange}
                     disabled={!isPasswordValid(prePassword)}

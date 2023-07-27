@@ -57,7 +57,7 @@ const TransactionDetail = (): JSX.Element => {
                             </div>
                             <div className="card w-full shadow-2xl bg-base-100">
                                 <div className="card-body w-full">
-                                    <TransferList />
+                                    <TransferList detail={true} />
 
 
                                 </div>

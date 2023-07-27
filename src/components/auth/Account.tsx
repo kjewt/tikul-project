@@ -43,7 +43,7 @@ const Account = (): JSX.Element => {
                 <input
                     type="text"
                     placeholder="숫자로 작성해주세요."
-                    className={`input input-bordered ${!isValidAccount ? 'input-error' : ''}`}
+                    className={`input input-bordered input-primary ${!isValidAccount ? 'input-error' : ''}`}
                     value={account}
                     onChange={handleAccountChange}
                 />

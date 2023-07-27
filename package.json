@@ -35,6 +35,7 @@
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "firebase": "10.1.0",
+    "firebase-tools": "^12.4.6",
     "firebaseui": "^5.0.0",
     "focus-trap-react": "^10.2.1",
     "i": "^0.3.7",

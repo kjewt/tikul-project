@@ -53,7 +53,7 @@ const EmailCheck = (): JSX.Element => {
                 <input
                     type="text"
                     placeholder="이메일"
-                    className={`input input-bordered ${!isValidEmail ? 'input-error' : ''}`}
+                    className={`input input-bordered  input-primary ${!isValidEmail ? 'input-error' : ''}`}
                     value={email}
                     onChange={handleEmailChange}
                     autoComplete="email"

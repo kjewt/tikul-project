@@ -64,7 +64,7 @@ const PasswordCheck = (): JSX.Element => {
                 <input
                     type="password"
                     placeholder="비밀번호 입력"
-                    className="input input-bordered"
+                    className="input input-bordered input-primary"
                     value={prePassword}
                     onChange={handlePrePasswordChange}
                 />
@@ -80,7 +80,7 @@ const PasswordCheck = (): JSX.Element => {
                 <input
                     type="password"
                     placeholder="비밀번호 재확인"
-                    className={`password input input-bordered ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
+                    className={`password input input-bordered input-primary ${!isValidPassword && isTyping && isTyping2 && 'input-error'}`}
                     value={comparingPassword}
                     onChange={handlePasswordChange}
                     disabled={!isPasswordValid(prePassword)}

@@ -30,9 +30,7 @@ const NavBar = () => {
         navigate('/login')
     };
 
-    const handleSetting = () => {
-        navigate('/editing')
-    }
+
 
     return (
         <div className="navbar bg-base-100 shadow-md">
@@ -53,7 +51,6 @@ const NavBar = () => {
                     </label>
                     <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40">
 
-                        <li><button className="p-2" onClick={handleSetting}>설정</button></li>
                         <li>
                             <button className="p-2" onClick={handleLogout}>
                                 로그아웃
