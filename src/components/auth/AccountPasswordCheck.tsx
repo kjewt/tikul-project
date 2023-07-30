@@ -34,7 +34,7 @@ const PasswordCheck = (): JSX.Element => {
         if (isSame) {
             setAccountPassword(password);
         } else {
-            setAccountPassword(null);
+            setAccountPassword('');
         }
     });
 

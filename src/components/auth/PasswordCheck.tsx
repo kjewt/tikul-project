@@ -38,7 +38,7 @@ const PasswordCheck = (): JSX.Element => {
         if (isSame) {
             setPassword(comparingPassword);
         } else {
-            setPassword(null);
+            setPassword('');
         }
 
         console.log('Passwordcheck: useEffect 실행됨!');

@@ -7,7 +7,7 @@ import {
     accountDataState
 } from '../../state/atoms';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, collection, CollectionReference } from 'firebase/firestore';
 import { firebaseAuth, db } from '../../../firebase';
 import Modal from '../common/Modal';
 
@@ -18,7 +18,7 @@ const BtnLogin = (): JSX.Element => {
     const [password, setPassword] = useRecoilState(passwordState);
     const [accountData, setAccountData] = useRecoilState(accountDataState);
     const [isLogin, setIsLogin] = useState(true);
-    const [details, setDetails] = useState<Document>()
+    const [details, setDetails] = useState<CollectionReference>()
     const user = firebaseAuth.currentUser;
     const userRef = user ? doc(db, "users", user.uid) : null; // 예외 처리
 
@@ -29,15 +29,25 @@ const BtnLogin = (): JSX.Element => {
             await signInWithEmailAndPassword(firebaseAuth, email, password);
             console.log('로그인 성공!');
             setIsLogin(true);
+            if (userRef) {
 
-            const accountDoc = await getDoc(userRef);
-            const data = accountDoc.data();
-            const detail = collection(userRef, 'details')
-            setAccountData(data);
-            setDetails(detail)
+                const accountDoc = await getDoc(userRef);
+                const data = accountDoc.data();
+                const detail = collection(userRef, 'details');
+                if (data) {
+                    setAccountData({
+                        account: "",
+                        accountPassword: "",
+                        balance: 0,
+                        bankName: "",
+                        email: "",
+                    });
+                }
+                setDetails(detail)
 
 
-            navigate('/Home'); // 회원가입 성공 후 로그인 페이지로 이동
+                navigate('/Home'); // 회원가입 성공 후 로그인 페이지로 이동
+            }
         } catch (error) {
             console.log('로그인 실패', error);
             setIsLogin(false);
@@ -46,7 +56,7 @@ const BtnLogin = (): JSX.Element => {
 
 
 
-    if (accountData) {
+    if (user) {
         localStorage.setItem('account', JSON.stringify(accountData));
         localStorage.setItem('uid', JSON.stringify(user.uid));
         console.log(accountData)

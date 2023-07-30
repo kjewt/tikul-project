@@ -20,7 +20,7 @@ const TransferInput = (): JSX.Element => {
     const [transactions, setTransactions] = useRecoilState(transactionsState);
     const [isBanking, setIsBanking] = useRecoilState(isBankingState);
     const [isComplete, setIsComplete] = useState(false)
-
+    const navigate = useNavigate()
 
     useEffect(() => {
         setIsCorrectAccountPassword(false)
@@ -40,49 +40,57 @@ const TransferInput = (): JSX.Element => {
 
                 // 송금하는 현재 유저의 "details" 컬렉션에 송금 내역 추가
                 const user = firebaseAuth.currentUser;
+                if (!user) {
+                    console.log('로그인이 필요합니다.');
+                    // 로그인 페이지로 이동하거나 로그인을 유도하는 메시지를 표시할 수 있습니다.
+                    navigate('/not-a-user'); // 로그인 페이지로 이동
+                    return;
+                }
                 const currentUserDocRef = doc(db, 'users', user.uid);
 
                 // 문서 데이터 가져오기
                 const currentUserDocSnap = await getDoc(currentUserDocRef);
                 const currentUserData = currentUserDocSnap.data();
 
-                const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
-                const addTransaction = {
-                    amount: transferAmount,
-                    description: description,
-                    isWithdrawal: 0, // 0은 송금
-                    category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
-                    date: new Date(),
+                if (currentUserData) {
+                    const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
+                    const addTransaction = {
+                        amount: transferAmount,
+                        description: description,
+                        isWithdrawal: 0, // 0은 송금
+                        category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
+                        date: new Date(),
+                    }
+                    await addDoc(currentUserDetailsRef, addTransaction);
+                    setTransactions((prevDetails) => [...prevDetails, addTransaction]);
+
+                    await updateDoc(currentUserDocRef, {
+                        balance: currentUserData.balance - Number(transferAmount),
+                    });
+                    // const userDoc = querySnapshot.docs[0].ref;
+                    const userDoc = querySnapshot.docs[0];
+                    const userRef = doc(db, 'users', userDoc.id);
+
+                    // 돈 받는 유저의 "details" 컬렉션에 송금 내역 추가
+                    const detailsRef = collection(db, 'users', userDoc.id, 'details');
+                    await addDoc(detailsRef, {
+                        amount: transferAmount,
+                        description: description,
+                        isWithdrawal: 1, //1는 입금 
+                        category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
+                        date: new Date(),
+                    });
+                    await updateDoc(userRef, {
+                        balance: userDoc.data().balance + Number(transferAmount),
+                    });
+
+                    // 송금 성공 후 입력 필드 초기화
+                    setAccountNumber('');
+                    setTransferAmount('');
+                    setPassword('');
+                    setIsComplete(true);
+                    console.log('송금 성공! 유저에게 내역이 추가되었습니다.');
                 }
-                await addDoc(currentUserDetailsRef, addTransaction);
-                setTransactions((prevDetails) => [...prevDetails, addTransaction]);
-
-                await updateDoc(currentUserDocRef, {
-                    balance: currentUserData.balance - Number(transferAmount),
-                });
-                // const userDoc = querySnapshot.docs[0].ref;
-                const userDoc = querySnapshot.docs[0];
-                const userRef = doc(db, 'users', userDoc.id);
-
-                // 돈 받는 유저의 "details" 컬렉션에 송금 내역 추가
-                const detailsRef = collection(db, 'users', userDoc.id, 'details');
-                await addDoc(detailsRef, {
-                    amount: transferAmount,
-                    description: description,
-                    isWithdrawal: 1, //1는 입금 
-                    category: ` 보낸 계좌: ${accountData.bankName} ${accountData.account}`,
-                    date: new Date(),
-                });
-                await updateDoc(userRef, {
-                    balance: userDoc.data().balance + Number(transferAmount),
-                });
-
-                // 송금 성공 후 입력 필드 초기화
-                setAccountNumber('');
-                setTransferAmount('');
-                setPassword('');
-                setIsComplete(true);
-                console.log('송금 성공! 유저에게 내역이 추가되었습니다.');
 
             } else {
                 console.log('입력한 은행 이름과 계좌번호와 일치하는 유저를 찾을 수 없습니다.');

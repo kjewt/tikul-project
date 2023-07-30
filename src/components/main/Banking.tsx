@@ -51,7 +51,13 @@ const Banking = (): JSX.Element => {
             if (accountDoc.exists()) {
                 const data = accountDoc.data();
 
-                setAccountData(data);
+                setAccountData({
+                    account: "",
+                    accountPassword: "",
+                    balance: 0,
+                    bankName: "",
+                    email: "",
+                });
                 setBankName(data.bankName);
                 setBalance(data.balance);
                 console.log('데이터 가져오기 성공');

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { accountDataState, isCorrectAccountPasswordState } from '../../state/atoms';
 
@@ -8,10 +9,23 @@ const Keypad = () => {
     const [password, setPassword] = useState('');
     const [accountData, setAccountData] = useRecoilState(accountDataState);
     const [isCorrectAccountPassword, setIsCorrectAccountPassword] = useRecoilState(isCorrectAccountPasswordState);
-
+    const navigate = useNavigate()
     const openKeypad = () => {
         setIsOpenKeypad((prev) => !prev);
     };
+
+    if (!accountData) {
+        setAccountData({
+            account: "",
+            accountPassword: "",
+            balance: 0,
+            bankName: "",
+            email: "",
+        });
+        navigate('/not-a-user')
+    }
+
+
 
     const handleButtonClick = (num) => {
         if (inputValue.length < 6) {
@@ -30,6 +44,7 @@ const Keypad = () => {
 
     useEffect(() => {
         // 입력한 값과 Firestore의 accountPassword 값을 비교하여 키패드를 열거나 닫습니다.
+
         if (inputValue.length === 6) {
             if (inputValue === accountData.accountPassword) {
                 setIsOpenKeypad(false);

@@ -7,7 +7,13 @@ import {atom} from "recoil";
 
 export const accountDataState = atom({
   key: "accountDataState",
-  default: null,
+  default: {
+    account: "",
+    accountPassword: "",
+    balance: 0,
+    bankName: "",
+    email: "",
+  },
 });
 
 export const transactionsState = atom<any[]>({

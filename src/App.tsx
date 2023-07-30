@@ -10,6 +10,7 @@ import TransferComplete from './components/main/TransferComplete';
 import Keypad from './components/common/KeyPad';
 import TransactionDetail from './views/TransactionDetail';
 import Footer from './components/common/footer';
+import NotAUser from './views/NotAUser';
 
 const App = (): JSX.Element => {
   return (
@@ -24,6 +25,7 @@ const App = (): JSX.Element => {
           <Route path="/complete" element={<TransferComplete />} />
           <Route path="/keypad" element={<Keypad />} />
           <Route path="/detail" element={<TransactionDetail />} />
+          <Route path="/not-a-user" element={<NotAUser />} />
           <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </section>

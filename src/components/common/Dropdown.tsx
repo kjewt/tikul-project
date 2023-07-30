@@ -35,7 +35,7 @@ const DropDown = (props): JSX.Element => {
                         <span className="label-text">{selectedItem}</span>
                         <i className='bx bx-chevron-down text-xl'></i>
                     </label>
-                    <ul tabIndex={0} className={`dropdown-content overflow-y-auto h-52 w-full z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ${isOpen ? '' : 'hidden'}`}>
+                    <ul tabIndex={0} className={`dropdown-content overflow-y-auto h-52 z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 ${isOpen ? '' : 'hidden'}`}>
                         <li><a onClick={() => handleItemClick('NH농협')}>NH농협</a></li>
                         <li><a onClick={() => handleItemClick('KB국민')}>KB국민</a></li>
                         <li><a onClick={() => handleItemClick('신한')}>신한</a></li>

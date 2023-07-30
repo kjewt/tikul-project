@@ -15,10 +15,10 @@ const Home = (): JSX.Element => {
     return (
         <>
             <div className="container min-h-screen">
-                <NavBar />
                 {accountData ? (
                     <>
 
+                        <NavBar />
                         <div className="flex">
                             <Summary />
                             {isBanking == 0 ? <Banking /> : isBanking == 1 ? <Transfer /> : <AddMoney />}

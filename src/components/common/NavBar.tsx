@@ -24,7 +24,13 @@ const NavBar = () => {
     // 로그아웃 시에 실행되는 함수
     const handleLogout = () => {
         // 여기서 emailState, bankNameState, accountDataState, accountState를 초기값으로 돌립니다.
-        setAccountData(null); // 계좌 데이터 초기값으로 설정
+        setAccountData({
+            account: "",
+            accountPassword: "",
+            balance: 0,
+            bankName: "",
+            email: "",
+        }); // 계좌 데이터 초기값으로 설정
         setTransactions([])
         setAccount('')
 

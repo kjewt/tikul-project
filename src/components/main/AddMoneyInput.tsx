@@ -43,24 +43,11 @@ const AddMoneyInput = (): JSX.Element => {
                 const currentUserDocSnap = await getDoc(currentUserDocRef);
                 const currentUserData = currentUserDocSnap.data();
 
-                // const currentUserDetailsRef = collection(db, 'users', user.uid, 'details');
-                // const addTransaction = {
-                //     amount: transferAmount,
-                //     description: description,
-                //     isWithdrawal: 2, //2는 충전
-                //     category: ` 충전 계좌: ${accountData.bankName} ${accountData.account}`,
-                //     date: new Date(),
-                // }
-                // await addDoc(currentUserDetailsRef, addTransaction);
-                // setTransactions((prevDetails) => [...prevDetails, addTransaction]);
 
-                // await updateDoc(currentUserDocRef, {
-                //     balance: currentUserData.balance + Number(transferAmount),
-                // });
                 const userDoc = querySnapshot.docs[0];
                 const userRef = doc(db, 'users', userDoc.id);
 
-                if (userDoc.data().balance >= Number(transferAmount)) {
+                if (userDoc && userDoc.data().balance && userDoc.data().balance >= Number(transferAmount)) {
                     const detailsRef = collection(db, 'users', userDoc.id, 'details');
                     await addDoc(detailsRef, {
                         amount: transferAmount,
