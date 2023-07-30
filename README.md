@@ -1,15 +1,18 @@
 # tikul-project
 온라인 뱅킹 서비스로 가상의 계좌를 등록하여 같은 database 안에 있는 다른  계좌로 송금, 입금, 충전 그리고 거래내역 필터링 기능을 지원하는 개인 프로젝트입니다.
+![](https://velog.velcdn.com/images/kjewt/post/f0921861-0534-41f7-ae3b-d058cd46a4e2/image.png)
 
 ## 기술 스택
-   - React
+   - React 18
    - TypeScript
    - Vite
    - recoil
    - Tailwindcss
    - DaisyUI
    - Yarn
-   - Firebase
+   - Firebase 10
+## Installation
+``` yarn install```
 
 ## 기능
 
