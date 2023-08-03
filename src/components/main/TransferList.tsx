@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc, addDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
-import { firebaseAuth, db } from '../../../firebase';
 import { useRecoilState } from 'recoil';
-import { selectedDateState, filteredTransactionsState } from '../../state/atoms';
-import 'react-day-picker/dist/style.css';
+import { filteredTransactionsState } from '../../state/atoms';
 import Fitering from '../common/Fitering';
 import Pagination from "react-js-pagination";
 import '../../assets/css/paging.css'
 
 const TransferList = ({ detail }: { detail: boolean }): JSX.Element => {
-    const user = firebaseAuth.currentUser;
-    const userRef = user ? doc(db, "users", user.uid) : null;
     const dateFormatter = detail
         ? new Intl.DateTimeFormat('ko', {
             year: '2-digit',
@@ -23,10 +18,6 @@ const TransferList = ({ detail }: { detail: boolean }): JSX.Element => {
             month: '2-digit',
             day: '2-digit',
         });
-    const [description, setDescription] = useState<string>('');
-    const [amount, setAmount] = useState<number>(0);
-    const [showAddContent, setShowAddContent] = useState<boolean>(false);
-    const [isWithdrawal, setIsWithdrawal] = useState<boolean>(false);
 
     // 필터필터필터
     const [filteredTransactions, setFilteredTransactions] = useRecoilState(filteredTransactionsState)
@@ -46,17 +37,6 @@ const TransferList = ({ detail }: { detail: boolean }): JSX.Element => {
     const [currentTransactions, setCurrentTransactions] = useState<Transaction[]>([]);
 
 
-    const toggleWithdrawal = () => {
-        setIsWithdrawal((prev) => !prev);
-    };
-
-    const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setDescription(e.target.value);
-    };
-
-    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAmount(Number(e.target.value));
-    };
 
     useEffect(() => {
         setCount(filteredTransactions.length);
@@ -72,16 +52,12 @@ const TransferList = ({ detail }: { detail: boolean }): JSX.Element => {
 
 
 
+
     return (
         <>
             <div className="card-body mx-3 my-3 px-4 py-2 pb-4 rounded-xl bg-base-100">
                 <div className="flex justify-end gap-2 text-sm">
-                    {/* <button><i className='bx bxs-edit-alt text-2xl text-primary'></i></button> */}
-
                     <div className="lg:tooltip tooltip-primary text-sm" data-tip="추가하기">
-                        {/* <button onClick={() => setShowAddContent((prev) => !prev)}>
-                            <i className='bx bx-list-plus text-3xl text-primary'></i>
-                        </button> */}
                     </div>
                 </div>
                 <Fitering />
